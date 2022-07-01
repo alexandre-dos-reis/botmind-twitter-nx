@@ -47,12 +47,37 @@
         "passWithNoTests": true
       }
     },
+    "ts-node-config": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ts-node --project ./apps/backend/tsconfig.app.json"
+      }
+    },
     "seed-run": {
       "executor": "nx:run-commands",
       "options": {
         "command": "ts-node --project ./apps/backend/tsconfig.app.json ./node_modules/typeorm-seeding/dist/cli.js seed -n seeds.config.ts -r ./apps/backend/src/config/database"
       }
+    },
+    "schema-drop": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ts-node --project ./apps/backend/tsconfig.app.json ./node_modules/typeorm/cli.js schema:drop -d ./apps/backend/src/config/database/migration.config.ts"
+      }
+    },
+    "schema-sync": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ts-node --project ./apps/backend/tsconfig.app.json ./node_modules/typeorm/cli.js schema:sync -d ./apps/backend/src/config/database/migration.config.ts"
+      }
+    },
+    "db-setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx run backend:schema-drop && nx run backend:schema-sync && nx run backend:seed-run"
+      }
     }
+
   },
   "tags": []
 }

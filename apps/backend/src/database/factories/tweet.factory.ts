@@ -1,6 +1,6 @@
 import { define } from 'typeorm-seeding';
 import { faker } from '@faker-js/faker';
-import { Tweet } from '../../api/tweet/tweet.entity';
+import { Tweet } from '../../api/entities/tweet.entity';
 
 define(Tweet, () => {
   const t = new Tweet();
