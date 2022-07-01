@@ -46,6 +46,12 @@
         "jestConfig": "apps/backend/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "seed-run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ts-node --project ./apps/backend/tsconfig.app.json ./node_modules/typeorm-seeding/dist/cli.js seed -n seeds.config.ts -r ./apps/backend/src/config/database"
+      }
     }
   },
   "tags": []
