@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Tweet } from '../entities/tweet.entity';
+import { Tweet, User } from '../entities';
 
 @Injectable()
 export class TweetService {
   constructor(@InjectRepository(Tweet) private tweetsRepo: Repository<Tweet>) {}
 
-  async find(): Promise<Tweet[]> {
+  async findAll(): Promise<Tweet[]> {
     const tweets = await this.tweetsRepo.find({
       relations: {
         likes: true,
@@ -32,7 +32,13 @@ export class TweetService {
     return this.tweetsRepo.findOneBy({ id });
   }
 
-  async remove(id: number): Promise<void> {
+  async delete(user: User, id: number): Promise<void> {
+    // Logic...
     await this.tweetsRepo.delete(id);
+  }
+
+  async update(user: User, tweet: Tweet): Promise<void> {
+    // Logic...
+    await this.tweetsRepo.update(tweet.id, tweet);
   }
 }
