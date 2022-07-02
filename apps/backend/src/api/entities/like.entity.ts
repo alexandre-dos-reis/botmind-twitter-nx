@@ -1,12 +1,13 @@
 import { Entity, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
+import { Tweet } from './tweet.entity';
 import { User } from './user.entity';
 
 @Entity()
-export class Relationship extends BaseEntity {
+export class Like extends BaseEntity {
   @ManyToOne(() => User, (user) => user.followers)
-  follower: User;
+  lover: User;
 
-  @ManyToOne(() => User, (user) => user.followeds)
-  followed: User;
+  @ManyToOne(() => Tweet, (tweet) => tweet.likes)
+  tweet: Tweet;
 }

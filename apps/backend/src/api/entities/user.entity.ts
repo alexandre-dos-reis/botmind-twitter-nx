@@ -1,10 +1,12 @@
 import { Entity, Column, OneToMany, Index } from 'typeorm';
 import { Tweet } from './tweet.entity';
-import { BaseEntity } from '../shared/base.entity';
+import { BaseEntity } from './base.entity';
 import { Relationship } from './relationship.entity';
+import { Like } from './like.entity';
 
 @Entity()
 export class User extends BaseEntity {
+
   @Index({ unique: true })
   @Column()
   email: string;
@@ -20,4 +22,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Relationship, (relationship) => relationship.followed)
   followeds: Relationship[];
+
+  @OneToMany(() => Like, (like) => like.lover)
+  likes: Like[];
 }

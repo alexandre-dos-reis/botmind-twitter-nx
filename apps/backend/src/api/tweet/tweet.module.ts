@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TweetController } from './tweet.controller';
-import { Tweet } from '../entities/tweet.entity';
+import { Tweet } from '../entities';
 import { TweetService } from './tweet.service';
 
 @Module({

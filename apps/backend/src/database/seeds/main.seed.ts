@@ -1,15 +1,14 @@
 import { faker } from '@faker-js/faker';
 import { Factory, Seeder } from 'typeorm-seeding';
-import { User } from '../../api/entities/user.entity';
-import { Tweet } from '../../api/entities/tweet.entity';
-import { Relationship } from '../../api/entities/relationship.entity';
+import { User, Like, Relationship, Tweet } from '../../api/entities';
 import * as argon from 'argon2';
 
-export default class UsersAndTweets implements Seeder {
+export default class Main implements Seeder {
   public async run(factory: Factory): Promise<any> {
     const numberOfUsers = 10;
     const numberOfTweets = 10 * numberOfUsers;
     const numberOfRelations = 10 * numberOfUsers;
+    const numberOfPotentialsLikes = numberOfTweets * numberOfUsers;
 
     const users = await factory(User)()
       .map(async (user: User) => {
@@ -18,7 +17,7 @@ export default class UsersAndTweets implements Seeder {
       })
       .createMany(numberOfUsers);
 
-    await factory(Tweet)()
+    const tweets = await factory(Tweet)()
       .map(async (tweet: Tweet) => {
         tweet.author = faker.helpers.arrayElement(users);
         return tweet;
@@ -32,6 +31,16 @@ export default class UsersAndTweets implements Seeder {
         await factory(Relationship)().create({
           followed: user1,
           follower: user2,
+        });
+      }
+    }
+
+    for (let i = 0; i < numberOfPotentialsLikes; i++) {
+      const isLiked = faker.datatype.boolean();
+      if (isLiked) {
+        await factory(Like)().create({
+          lover: faker.helpers.arrayElement(users),
+          tweet: faker.helpers.arrayElement(tweets),
         });
       }
     }

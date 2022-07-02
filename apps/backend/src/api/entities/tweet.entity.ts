@@ -1,6 +1,7 @@
-import { Entity, Column, ManyToOne } from 'typeorm';
-import { BaseEntity } from '../shared/base.entity';
+import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
+import { BaseEntity } from './base.entity';
 import { User } from './user.entity';
+import { Like } from './like.entity';
 
 @Entity()
 export class Tweet extends BaseEntity {
@@ -12,4 +13,7 @@ export class Tweet extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.tweets)
   author: User;
+
+  @OneToMany(() => Like, (like) => like.tweet)
+  likes: Like[];
 }

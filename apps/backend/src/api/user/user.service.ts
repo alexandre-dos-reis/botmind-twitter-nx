@@ -1,21 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
+import { User } from '../entities';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private tweetsRepo: Repository<User>) {}
+  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
-  findAll(): Promise<User[]> {
-    return this.tweetsRepo.find();
-  }
+  GetMyInfo(user: User) {
+    const userWithInfo = this.userRepo.findOne({
+      where: {
+        id: user.id,
+      },
+      relations: ['followers', 'followeds', 'tweets'],
+    });
 
-  findOne(id: number): Promise<User> {
-    return this.tweetsRepo.findOneBy({ id });
-  }
-
-  async remove(id: number): Promise<void> {
-    await this.tweetsRepo.delete(id);
+    return userWithInfo;
   }
 }

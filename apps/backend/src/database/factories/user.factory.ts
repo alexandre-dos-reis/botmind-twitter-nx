@@ -1,6 +1,6 @@
 import { define } from 'typeorm-seeding';
 import { faker } from '@faker-js/faker';
-import { User } from '../../api/entities/user.entity';
+import { User } from '../../api/entities';
 
 define(User, () => {
   const u = new User();
