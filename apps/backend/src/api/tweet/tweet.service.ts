@@ -32,6 +32,7 @@ export class TweetService {
     return this.tweetsRepo.findOneBy({ id });
   }
 
+  // update or delete on table "tweet" violates foreign key constraint "FK_ef703ea3b935b793382f8be7181" on table "like"
   async delete(user: User, id: number): Promise<void> {
     // Logic...
     await this.tweetsRepo.delete(id);
