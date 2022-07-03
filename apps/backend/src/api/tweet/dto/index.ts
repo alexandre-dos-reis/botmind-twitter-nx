@@ -1,1 +1,1 @@
-export * from './tweet.dto'
+export * from './tweet.dto';
