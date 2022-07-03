@@ -1,15 +1,8 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
-import { Tweet, User } from '../entities';
+import { User } from '../entities';
+import { TweetDto } from './dto';
 import { TweetService } from './tweet.service';
 
 @Controller('tweets')
@@ -17,8 +10,8 @@ export class TweetController {
   constructor(private readonly tweetService: TweetService) {}
 
   @Get()
-  async findAll() {
-    return await this.tweetService.findAll();
+  findAll() {
+    return this.tweetService.findAll();
   }
 
   @UseGuards(JwtGuard)
@@ -29,7 +22,14 @@ export class TweetController {
 
   @UseGuards(JwtGuard)
   @Patch(':id')
-  update(@GetUser() user: User, @Body() tweet: Tweet) {
-    return this.tweetService.update(user, tweet);
+  update(@GetUser() user: User, @Body() dto: TweetDto, @Param('id') id: number) {
+    console.log(id);
+    return this.tweetService.update(user, dto, id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post()
+  create(@GetUser() user: User, @Body() dto: TweetDto) {
+    return this.tweetService.create(user, dto);
   }
 }

@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tweet, User } from '../entities';
+import { TweetDto } from './dto';
 
 @Injectable()
 export class TweetService {
@@ -28,18 +29,50 @@ export class TweetService {
     return tweets.sort((a, b) => b.likes.length - a.likes.length);
   }
 
-  findOne(id: number): Promise<Tweet> {
-    return this.tweetsRepo.findOneBy({ id });
+  async findTweet(id: number, user: User): Promise<Tweet> {
+    const tweet = await this.tweetsRepo.findOne({
+      where: { id },
+      relations: {
+        author: true,
+      },
+    });
+
+    if (!tweet) {
+      throw new NotFoundException("Tweet doesn't exists !");
+    }
+
+    if (tweet.author.id !== user.id) {
+      throw new ForbiddenException("You can't update nor delete someone else's tweet");
+    }
+
+    delete tweet.author.password;
+    return tweet;
   }
 
-  // update or delete on table "tweet" violates foreign key constraint "FK_ef703ea3b935b793382f8be7181" on table "like"
-  async delete(user: User, id: number): Promise<void> {
-    // Logic...
-    await this.tweetsRepo.delete(id);
+  async delete(user: User, id: number): Promise<{ deleted: boolean }> {
+    await this.findTweet(id, user);
+
+    const res = await this.tweetsRepo.delete(id);
+
+    return {
+      deleted: res.affected > 0 ? true : false,
+    };
   }
 
-  async update(user: User, tweet: Tweet): Promise<void> {
-    // Logic...
-    await this.tweetsRepo.update(tweet.id, tweet);
+  async update(user: User, dto: TweetDto, id: number): Promise<Tweet> {
+    const tweet = await this.findTweet(id, user);
+
+    return this.tweetsRepo.save({
+      ...tweet,
+      content: dto.content,
+    });
+  }
+
+  async create(user: User, dto: TweetDto): Promise<Tweet> {
+    return this.tweetsRepo.save({
+      author: user,
+      content: dto.content,
+      image: '',
+    });
   }
 }
