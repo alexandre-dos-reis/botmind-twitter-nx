@@ -1,10 +1,15 @@
-import { Entity, ManyToOne } from 'typeorm';
-import { BaseEntity } from './base.entity';
+import { CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Tweet } from './tweet.entity';
 import { User } from './user.entity';
 
 @Entity()
-export class Like extends BaseEntity {
+export class Like {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
   @ManyToOne(() => User, (user) => user.followers)
   lover: User;
 

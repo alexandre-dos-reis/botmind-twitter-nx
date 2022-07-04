@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Tweet, User, Like } from '../entities';
 import { TweetDto } from './dto';
 
@@ -13,11 +13,24 @@ export class TweetService {
 
   async findAll(currentUser?: User) {
     const tweets = await this.tweetsRepo.find({
+      where: {
+        parentTweetId: IsNull(), // Select top level tweets
+      },
       relations: {
         likes: {
           lover: true,
         },
         author: true,
+        replies: {
+          likes: true,
+          author: true,
+        },
+      },
+      order: {
+        createdAt: 'DESC',
+        replies: {
+          createdAt: 'ASC',
+        },
       },
     });
 

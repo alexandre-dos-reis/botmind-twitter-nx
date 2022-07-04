@@ -15,6 +15,12 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
+  @Column()
+  firstname: string;
+
+  @Column()
+  lastname: string;
+
   @OneToMany(() => Tweet, (tweet) => tweet.author)
   tweets: Tweet[];
 

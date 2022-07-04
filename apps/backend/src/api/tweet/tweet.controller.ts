@@ -7,7 +7,6 @@ import {
   Param,
   Patch,
   Post,
-  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -50,8 +49,8 @@ export class TweetController {
   }
 
   // Subscription to users
-  @Post(':id/subscribe')
-  subscribe(@GetUser() user: User, @Param('id') id: number) {
-    return {};
-  }
+  // @Post(':id/subscribe')
+  // subscribe(@GetUser() user: User, @Param('id') id: number) {
+  //   return {};
+  // }
 }
