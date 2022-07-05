@@ -1,0 +1,5 @@
+<div *ngIf="messageService.alerts.length">
+    <div *ngFor='let alert of messageService.alerts'>
+        <app-alert [message]="alert.message" [type]="alert.type"></app-alert>
+    </div>
+</div>

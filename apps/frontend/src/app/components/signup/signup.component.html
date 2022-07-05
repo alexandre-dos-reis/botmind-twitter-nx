@@ -1,0 +1,27 @@
+<form [formGroup]="form" (submit)="submit()">
+    <h1 class="h3 mb-3 fw-normal">Créer un compte</h1>
+
+    <!-- <div class="mb-3">
+        <input formControlName="firstname" type="text" class="form-control" placeholder="Prénom" required>
+        <span *ngIf="errors.firstname" class="text-danger">{{errors.firstname}}</span>
+    </div> -->
+
+    <app-input [parentForm]="form" [error]="errors.firstname" [name]="'firstname'" [type]="'text'" [placeholder]="'Prenom'"></app-input>
+
+    <div class="mb-3">
+        <input formControlName="lastname" type="text" class="form-control" placeholder="Nom" required>
+        <span *ngIf="errors.lastname" class="text-danger">{{errors.lastname}}</span>
+    </div>
+
+    <div class="mb-3">
+        <input formControlName="email" type="email" class="form-control" placeholder="Email" required>
+        <span *ngIf="errors.email" class="text-danger">{{errors.email}}</span>
+    </div>
+
+    <div class="mb-3">
+        <input formControlName="password" type="password" class="form-control" placeholder="Mot de passe" required>
+        <span *ngIf="errors.password" class="text-danger">{{errors.password}}</span>
+    </div>
+
+    <button type="submit" class="w-100 btn btn-lg btn-primary">Créer</button>
+</form>

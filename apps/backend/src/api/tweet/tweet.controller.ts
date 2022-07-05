@@ -12,9 +12,10 @@ import {
 } from '@nestjs/common';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
-import { Tweet, User } from '../entities';
-import { TweetDto } from './dto';
+import { User } from '../entities';
+import { TweetDtoRequest } from '@botmind-twitter-nx/api-interface';
 import { TweetService } from './tweet.service';
+import { TweetsResponse } from '@botmind-twitter-nx/api-interface';
 
 @Controller('tweets')
 @UseGuards(JwtGuard)
@@ -23,8 +24,12 @@ export class TweetController {
 
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
-  findAll(@GetUser() user: User): Promise<Tweet[]> {
-    return this.tweetService.findAll(user);
+  async findAll(@GetUser() user: User): Promise<TweetsResponse> {
+    const tweets = await this.tweetService.findAll(user);
+    return {
+      tweetsCount: tweets.length,
+      tweets,
+    };
   }
 
   @Delete(':id')
@@ -33,12 +38,12 @@ export class TweetController {
   }
 
   @Patch(':id')
-  update(@GetUser() user: User, @Body() dto: TweetDto, @Param('id') id: number) {
+  update(@GetUser() user: User, @Body() dto: TweetDtoRequest, @Param('id') id: number) {
     return this.tweetService.update(user, dto, id);
   }
 
   @Post()
-  create(@GetUser() user: User, @Body() dto: TweetDto) {
+  create(@GetUser() user: User, @Body() dto: TweetDtoRequest) {
     return this.tweetService.create(user, dto);
   }
 

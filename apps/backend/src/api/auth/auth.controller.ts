@@ -1,19 +1,24 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto';
+import {
+  SignInDtoRequest,
+  SignUpDtoRequest,
+  SignInResponse,
+  SignUpResponse,
+} from '@botmind-twitter-nx/api-interface';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  signUp(@Body() dto: AuthDto) {
+  signUp(@Body() dto: SignUpDtoRequest): Promise<SignUpResponse> {
     return this.authService.signUp(dto);
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('signin')
-  signIn(@Body() dto: AuthDto) {
+  signIn(@Body() dto: SignInDtoRequest): Promise<SignInResponse> {
     return this.authService.signIn(dto);
   }
 }

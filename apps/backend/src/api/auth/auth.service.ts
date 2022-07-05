@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { AuthDto } from './dto';
+import { SignInDtoRequest, SignUpDtoRequest } from '@botmind-twitter-nx/api-interface';
 import * as argon from 'argon2';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities';
@@ -15,12 +15,14 @@ export class AuthService {
     private configService: ConfigService
   ) {}
 
-  async signUp(dto: AuthDto) {
+  async signUp(dto: SignUpDtoRequest) {
     try {
       const hash = await argon.hash(dto.password);
       const user = this.userRepo.create({
         email: dto.email,
         password: hash,
+        firstname: dto.firstname,
+        lastname: dto.lastname,
       });
 
       await this.userRepo.save(user);
@@ -35,7 +37,7 @@ export class AuthService {
     }
   }
 
-  async signIn(dto: AuthDto) {
+  async signIn(dto: SignInDtoRequest) {
     // find the user by email
     const user = await this.userRepo.findOneBy({
       email: dto.email,
@@ -59,7 +61,7 @@ export class AuthService {
     const secret = this.configService.get('JWT_SECRET');
 
     const token = await this.jwtService.signAsync(payload, {
-      expiresIn: '30m', // 10 minutes before expiration
+      expiresIn: '30m', // 30 minutes before expiration
       secret,
     });
 

@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class TweetDto {
+export class TweetDtoRequest {
   @IsString()
   @IsNotEmpty()
-  content: string;
+  content!: string;
 }

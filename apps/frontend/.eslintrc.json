@@ -21,7 +21,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "botmind-twitter-nx",
+            "prefix": "app",
             "style": "kebab-case"
           }
         ]

@@ -34,4 +34,7 @@ export class Tweet extends BaseEntity {
   @ManyToOne(() => Tweet, (tweet) => tweet.replies)
   @JoinColumn({ name: 'parentTweetId' })
   parentTweet: Tweet;
+
+  @Transform(({ obj }) => obj['replies'] && obj['replies'].length)
+  repliesCount = 0
 }

@@ -77,7 +77,6 @@
         "command": "nx run backend:schema-drop && nx run backend:schema-sync && nx run backend:seed-run"
       }
     }
-
   },
   "tags": []
 }

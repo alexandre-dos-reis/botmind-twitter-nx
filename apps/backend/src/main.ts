@@ -1,10 +1,15 @@
-import { ClassSerializerInterceptor, Logger, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  ClassSerializerInterceptor,
+  Logger,
+  ValidationPipe,
+} from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
@@ -12,6 +17,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
+      exceptionFactory: (errors) => new BadRequestException(errors),
     })
   );
 

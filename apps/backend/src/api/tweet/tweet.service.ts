@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { Tweet, User, Like } from '../entities';
-import { TweetDto } from './dto';
+import { TweetDtoRequest } from '@botmind-twitter-nx/api-interface';
 
 @Injectable()
 export class TweetService {
@@ -81,7 +81,7 @@ export class TweetService {
     };
   }
 
-  async update(user: User, dto: TweetDto, id: number): Promise<Tweet> {
+  async update(user: User, dto: TweetDtoRequest, id: number): Promise<Tweet> {
     const tweet = await this.findTweet(id, user);
 
     return this.tweetsRepo.save({
@@ -90,7 +90,7 @@ export class TweetService {
     });
   }
 
-  async create(user: User, dto: TweetDto): Promise<Tweet> {
+  async create(user: User, dto: TweetDtoRequest): Promise<Tweet> {
     if (!user) {
       throw new ForbiddenException();
     }
