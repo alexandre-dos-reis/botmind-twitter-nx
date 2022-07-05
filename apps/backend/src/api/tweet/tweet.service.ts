@@ -29,19 +29,19 @@ export class TweetService {
       order: {
         createdAt: 'DESC',
         replies: {
-          createdAt: 'ASC',
+          createdAt: 'DESC',
         },
       },
     });
 
     // Order by number of likes DESC
-    const sortedTweets = tweets.sort((a, b) => b.likes.length - a.likes.length);
+    // const sortedTweets = tweets.sort((a, b) => b.likes.length - a.likes.length);
 
     if (!currentUser) {
-      return sortedTweets;
+      return tweets;
     }
 
-    return sortedTweets.map((tweet) => {
+    return tweets.map((tweet) => {
       const TweetLiked = tweet.likes.find((like) => like.lover.id === currentUser.id);
       if (TweetLiked) tweet.isCurrentUserHasLiked = true;
       return tweet;

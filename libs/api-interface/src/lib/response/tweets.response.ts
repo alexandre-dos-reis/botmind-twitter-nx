@@ -19,7 +19,7 @@ interface Reply {
   author: Author;
 }
 
-interface Tweet {
+export interface Tweet {
   likesCount: number;
   isCurrentUserHasLiked: boolean;
   repliesCount: number;

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
@@ -13,6 +13,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { FlashMessageComponent } from './components/flash-message/flash-message.component';
 import { AlertComponent } from './components/alert/alert.component';
 import { InputComponent } from './components/form/input/input.component';
+import { TweetComponent } from './components/tweet/tweet.component';
+import { DateAgoPipe } from './pipe/date-ago.pipe';
 
 @NgModule({
   declarations: [
@@ -25,6 +27,8 @@ import { InputComponent } from './components/form/input/input.component';
     FlashMessageComponent,
     AlertComponent,
     InputComponent,
+    TweetComponent,
+    DateAgoPipe,
   ],
   imports: [
     BrowserModule,

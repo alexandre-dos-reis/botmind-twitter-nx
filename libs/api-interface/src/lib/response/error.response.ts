@@ -5,7 +5,7 @@ interface Target {
     password: string;
 }
 
-interface Constraints {
+export interface Constraints {
     isEmail: string;
     isNotEmpty: string;
 }

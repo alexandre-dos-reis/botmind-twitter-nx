@@ -1,4 +1,4 @@
 <div class="mb-3" [formGroup]="parentForm">
-    <input formControlName="{{ name }}" type="{{ type }}" class="form-control" placeholder="{{ placeholder }}" required>
+    <input formControlName="{{ name }}" name="{{ name }}" type="{{ type }}" class="form-control" placeholder="{{ placeholder }}" required>
     <span *ngIf="error" class="text-danger">{{ error }}</span>
 </div>

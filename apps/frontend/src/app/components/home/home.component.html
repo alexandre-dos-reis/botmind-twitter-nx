@@ -1,1 +1,3 @@
-<p>home works!</p>
+<div class="list-group" *ngIf="data && data.tweetsCount > 0">
+    <app-tweet *ngFor="let tweet of data.tweets" [tweet]="tweet"></app-tweet>
+</div>

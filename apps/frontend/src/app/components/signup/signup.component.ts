@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { SignUpDtoRequest, Error400 } from '@botmind-twitter-nx/api-interface';
+import { SignUpDtoRequest, Error400, Constraints } from '@botmind-twitter-nx/api-interface';
 import { AuthService } from '../../service/auth.service';
 import { MessageService } from '../../service/message.service';
 
-interface Error {
+interface ErrorItems {
   [key: string]: string;
 }
 
@@ -14,7 +14,7 @@ interface Error {
 })
 export class SignupComponent implements OnInit {
   form!: FormGroup;
-  errors!: SignUpDtoRequest;
+  errors!: ErrorItems;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -41,7 +41,7 @@ export class SignupComponent implements OnInit {
   submit(): void {
     this.authService.signUp(this.form.getRawValue() as SignUpDtoRequest).subscribe({
       // On success
-      next: (data) => {
+      next: () => {
         this.messageService.add({
           type: 'success',
           message: 'OK',
@@ -51,7 +51,12 @@ export class SignupComponent implements OnInit {
       // On error
       error: ({ error }: { error: Error400 }) => {
         error.message.forEach((m) => {
-          const errorsString = m.constraints.isEmail ?? ' ' + m.constraints.isNotEmpty ?? '.';
+          const errorsString = Object.keys(m.constraints)
+            .map((key) => {
+              const errorString = m.constraints[key as keyof Constraints];
+              return errorString.charAt(0).toUpperCase() + errorString.slice(1) + ' !';
+            })
+            .join(' ');
           this.errors[m.property as keyof SignUpDtoRequest] = errorsString;
         });
       },

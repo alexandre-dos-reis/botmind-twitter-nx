@@ -18,6 +18,6 @@ export class SigninComponent implements OnInit {
   }
 
   submit(): void {
-    console.log(this.form.getRawValue())
+    console.log(this.form.getRawValue());
   }
 }
