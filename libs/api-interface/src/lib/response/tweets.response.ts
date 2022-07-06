@@ -7,7 +7,7 @@ interface Author {
   lastname: string;
 }
 
-interface Reply {
+export interface Reply {
   likesCount: number;
   isCurrentUserHasLiked: boolean;
   id: number;

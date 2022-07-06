@@ -15,6 +15,7 @@ import { AlertComponent } from './components/alert/alert.component';
 import { InputComponent } from './components/form/input/input.component';
 import { TweetComponent } from './components/tweet/tweet.component';
 import { DateAgoPipe } from './pipe/date-ago.pipe';
+import { ReplyComponent } from './components/reply/reply.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { DateAgoPipe } from './pipe/date-ago.pipe';
     InputComponent,
     TweetComponent,
     DateAgoPipe,
+    ReplyComponent,
   ],
   imports: [
     BrowserModule,
