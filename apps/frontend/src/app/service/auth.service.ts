@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import {
@@ -8,57 +8,37 @@ import {
   SignUpResponse,
   UserProfileResponse,
 } from '@botmind-twitter-nx/api-interface';
-import { Observable, of, Subscription, throwError } from 'rxjs';
-import { MessageService } from './message.service';
+import { Observable } from 'rxjs';
+import { JwtService } from './jwt.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   endpoint = 'http://localhost:3333/api';
-  accessTokenKey = 'access_token';
+
   currentUser!: UserProfileResponse;
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private messageService: MessageService
-  ) {}
+  constructor(private http: HttpClient, private router: Router, private jwtService: JwtService) {}
 
-  signUp(user: SignUpDtoRequest): Observable<SignUpResponse> {
+  signUp(user: SignUpDtoRequest) {
     return this.http.post<SignUpResponse>(`${this.endpoint}/auth/signup`, user);
   }
 
-  signIn(user: SignInDtoRequest): Subscription {
-    const api = `${this.endpoint}/auth/signin`;
-    return this.http.post<SignInResponse>(api, user).subscribe((res: SignInResponse) => {
-      localStorage.setItem(this.accessTokenKey, res.access_token);
-      this.getUserProfile().subscribe((res: UserProfileResponse) => {
-        this.currentUser = res;
-        this.router.navigate(['/']);
-      });
-    });
+  signIn(user: SignInDtoRequest) {
+    return this.http.post<SignInResponse>(`${this.endpoint}/auth/signin`, user);
   }
 
   getUserProfile(): Observable<UserProfileResponse> {
     const api = `${this.endpoint}/users/me`;
-    return this.http.get<UserProfileResponse>(api, {
-      headers: new HttpHeaders()
-        .set('Content-Type', 'application/json')
-        .set('Authorization', `Bearer ${this.getToken}`),
-    });
+    return this.http.get<UserProfileResponse>(api, this.jwtService.getHeaderWithToken());
   }
 
   logout() {
-    localStorage.removeItem(this.accessTokenKey);
-    this.router.navigate(['/']);
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem(this.accessTokenKey);
+    this.jwtService.deleteToken();
   }
 
   get isLoggedIn(): boolean {
-    return this.getToken() !== null ? true : false;
+    return this.jwtService.getToken() !== null ? true : false;
   }
 }

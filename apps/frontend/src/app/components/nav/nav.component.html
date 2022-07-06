@@ -3,12 +3,18 @@
     <a routerLink="/" class="navbar-brand">Botmind Twitter</a>
 
     <div>
-      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0" *ngIf="!isUserAuthenticated">
         <li class="nav-item">
           <a routerLink="/se-connecter" class="nav-link">Se connecter</a>
         </li>
         <li class="nav-item">
           <a routerLink="/creer-un-compte" class="nav-link">Créer un compte</a>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav me-auto mb-2 mb-md-0" *ngIf="isUserAuthenticated">
+        <li class="nav-item">
+          <a routerLink="/se-connecter" class="nav-link" (click)="logout()" >Se déconnecter</a>
         </li>
       </ul>
     </div>

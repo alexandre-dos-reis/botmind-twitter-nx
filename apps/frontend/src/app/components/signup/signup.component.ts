@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { SignUpDtoRequest, Error400, Constraints } from '@botmind-twitter-nx/api-interface';
+import { ServerError, SignUpDtoRequest } from '@botmind-twitter-nx/api-interface';
+import { emptyErrorForm } from '../../helpers/Errors';
+import { handleServerError } from '../../helpers/Errors/handleServerError';
+import { createErrorItems } from '../../helpers/Form';
+import { FormErrors } from '../../helpers/types';
 import { AuthService } from '../../service/auth.service';
 import { MessageService } from '../../service/message.service';
-
-interface ErrorItems {
-  [key: string]: string;
-}
 
 @Component({
   selector: 'app-signup',
@@ -14,7 +14,7 @@ interface ErrorItems {
 })
 export class SignupComponent implements OnInit {
   form!: FormGroup;
-  errors!: ErrorItems;
+  errors!: FormErrors;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -23,42 +23,34 @@ export class SignupComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.form = this.formBuilder.group({
-      firstname: '',
-      lastname: '',
-      email: '',
-      password: '',
-    } as SignUpDtoRequest);
-
-    this.errors = {
+    const formItems = {
       firstname: '',
       lastname: '',
       email: '',
       password: '',
     };
+
+    this.form = this.formBuilder.group({
+      ...formItems,
+    } as SignUpDtoRequest);
+
+    this.errors = createErrorItems(formItems);
   }
 
-  submit(): void {
+  onSubmit(): void {
     this.authService.signUp(this.form.getRawValue() as SignUpDtoRequest).subscribe({
-      // On success
+      // on success
       next: () => {
         this.messageService.add({
           type: 'success',
-          message: 'OK',
+          message: 'Votre compte a été créé.',
         });
         this.form.reset();
+        this.errors = emptyErrorForm(this.errors);
       },
-      // On error
-      error: ({ error }: { error: Error400 }) => {
-        error.message.forEach((m) => {
-          const errorsString = Object.keys(m.constraints)
-            .map((key) => {
-              const errorString = m.constraints[key as keyof Constraints];
-              return errorString.charAt(0).toUpperCase() + errorString.slice(1) + ' !';
-            })
-            .join(' ');
-          this.errors[m.property as keyof SignUpDtoRequest] = errorsString;
-        });
+      // on error
+      error: ({ error }: { error: ServerError }) => {
+        handleServerError(error, this.errors, this.messageService);
       },
     });
   }
