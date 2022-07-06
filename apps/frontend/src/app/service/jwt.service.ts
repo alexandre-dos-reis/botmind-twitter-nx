@@ -19,9 +19,7 @@ export class JwtService {
     localStorage.removeItem(this.accessTokenKey);
   }
 
-  getHeaderWithToken() {
-    return {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${this.getToken()}`),
-    };
+  getHeaderWithToken(): HttpHeaders {
+    return new HttpHeaders().set('Authorization', `Bearer ${this.getToken()}`);
   }
 }

@@ -7,15 +7,15 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
 import { User } from '../entities';
-import { TweetDtoRequest } from '@botmind-twitter-nx/api-interface';
+import { TweetDtoRequest, TweetsResponse, TweetDtoQuery } from '@botmind-twitter-nx/api-interface';
 import { TweetService } from './tweet.service';
-import { TweetsResponse } from '@botmind-twitter-nx/api-interface';
 
 @Controller('tweets')
 @UseGuards(JwtGuard)
@@ -24,11 +24,10 @@ export class TweetController {
 
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
-  async findAll(@GetUser() user: User): Promise<TweetsResponse> {
-    const tweets = await this.tweetService.findAll(user);
+  async findAll(@GetUser() user: User, @Query() dto: TweetDtoQuery): Promise<TweetsResponse> {
     return {
-      tweetsCount: tweets.length,
-      tweets,
+      tweetsCount: await this.tweetService.countAllTweets(),
+      tweets: await this.tweetService.findByQuery(dto, user),
     };
   }
 

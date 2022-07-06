@@ -1,3 +1,4 @@
-<div class="list-group" *ngIf="data && data.tweetsCount > 0">
-    <app-tweet *ngFor="let tweet of data.tweets" [tweet]="tweet"></app-tweet>
+<div class="list-group" *ngIf="tweets && totalTweets > 0" class="container-sm" infiniteScroll
+    [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
+    <app-tweet *ngFor="let tweet of tweets" [tweet]="tweet"></app-tweet>
 </div>

@@ -4,7 +4,11 @@
 @import "~bootstrap/scss/bootstrap";
 @import "bootstrap-icons/font/bootstrap-icons";
 
-body.dark-mode {
+body {
+    overflow: scroll;
+}
+
+.dark-mode {
     background-color: #2d3436;
     color: #dfe6e9;
     & a {

@@ -17,6 +17,7 @@ import { TweetComponent } from './components/tweet/tweet.component';
 import { DateAgoPipe } from './pipe/date-ago.pipe';
 import { ReplyComponent } from './components/reply/reply.component';
 import { DarkModeToggleComponent } from './components/dark-mode-toggle/dark-mode-toggle.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { DarkModeToggleComponent } from './components/dark-mode-toggle/dark-mode
     NgbModule,
     AppRoutingModule,
     HttpClientModule,
+    InfiniteScrollModule
   ],
   providers: [],
   bootstrap: [AppComponent],

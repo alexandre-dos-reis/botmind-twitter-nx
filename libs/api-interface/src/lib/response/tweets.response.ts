@@ -1,4 +1,4 @@
-interface Author {
+export interface Author {
   id: number;
   createdAt: Date;
   updatedAt: Date;

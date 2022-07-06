@@ -5,6 +5,5 @@ import { Relationship } from '../../api/entities';
 define(Relationship, () => {
   const r = new Relationship();
   r.createdAt = faker.date.past();
-  r.updatedAt = faker.date.recent();
   return r;
 });

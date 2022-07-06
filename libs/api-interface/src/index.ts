@@ -1,3 +1,5 @@
+export * from './lib/dto-query/tweet.dto.query';
+
 export * from './lib/dto-request/signin.dto.request';
 export * from './lib/dto-request/signup.dto.request';
 export * from './lib/dto-request/tweet.dto.request';

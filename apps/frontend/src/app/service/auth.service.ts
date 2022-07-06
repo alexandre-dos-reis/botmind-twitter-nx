@@ -10,28 +10,29 @@ import {
 } from '@botmind-twitter-nx/api-interface';
 import { Observable } from 'rxjs';
 import { JwtService } from './jwt.service';
+import { environment as env } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  endpoint = 'http://localhost:3333/api';
-
   currentUser!: UserProfileResponse;
 
   constructor(private http: HttpClient, private router: Router, private jwtService: JwtService) {}
 
   signUp(user: SignUpDtoRequest) {
-    return this.http.post<SignUpResponse>(`${this.endpoint}/auth/signup`, user);
+    return this.http.post<SignUpResponse>(`${env.apiEndPoint}/auth/signup`, user);
   }
 
   signIn(user: SignInDtoRequest) {
-    return this.http.post<SignInResponse>(`${this.endpoint}/auth/signin`, user);
+    return this.http.post<SignInResponse>(`${env.apiEndPoint}/auth/signin`, user);
   }
 
   getUserProfile(): Observable<UserProfileResponse> {
-    const api = `${this.endpoint}/users/me`;
-    return this.http.get<UserProfileResponse>(api, this.jwtService.getHeaderWithToken());
+    const api = `${env.apiEndPoint}/users/me`;
+    return this.http.get<UserProfileResponse>(api, {
+      headers: this.jwtService.getHeaderWithToken(),
+    });
   }
 
   logout() {

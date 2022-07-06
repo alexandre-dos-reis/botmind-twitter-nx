@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { TweetsResponse } from '@botmind-twitter-nx/api-interface';
+import { Tweet } from '@botmind-twitter-nx/api-interface';
+import { Emitters } from '../../emitters/emitters';
 import { TweetService } from '../../service/tweet.service';
 
 @Component({
@@ -7,15 +8,34 @@ import { TweetService } from '../../service/tweet.service';
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {
-  data!: TweetsResponse;
+  tweets: Tweet[] = [];
+  totalTweets = 0;
+  tweetsPerCall = 10;
+  offset = 0;
+  isUserLoggedIn = false;
 
   constructor(private tweetsService: TweetService) {}
 
   ngOnInit(): void {
     this.getTweets();
+    Emitters.authEmitter.subscribe((auth: boolean) => {
+      this.isUserLoggedIn = auth;
+    });
   }
 
   getTweets() {
-    this.tweetsService.getTweets().subscribe((data) => (this.data = data));
+    this.tweetsService
+      .getTweets({ count: this.tweetsPerCall, offset: this.offset }, this.isUserLoggedIn)
+      .subscribe((res) => {
+        this.tweets = this.tweets.concat(res.tweets);
+        this.totalTweets = res.tweetsCount;
+        this.offset += this.tweetsPerCall;
+      });
+  }
+
+  onScroll() {
+    if (this.totalTweets >= this.offset) {
+      this.getTweets();
+    }
   }
 }

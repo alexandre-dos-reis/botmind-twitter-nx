@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { Tweet, User, Like } from '../entities';
-import { TweetDtoRequest } from '@botmind-twitter-nx/api-interface';
+import { TweetDtoQuery, TweetDtoRequest } from '@botmind-twitter-nx/api-interface';
 
 @Injectable()
 export class TweetService {
@@ -11,7 +11,13 @@ export class TweetService {
     @InjectRepository(Like) private likesRepo: Repository<Like>
   ) {}
 
-  async findAll(currentUser?: User) {
+  async countAllTweets() {
+    return await this.tweetsRepo.countBy({
+      parentTweetId: IsNull(),
+    });
+  }
+
+  async findByQuery(dto: TweetDtoQuery, currentUser?: User) {
     const tweets = await this.tweetsRepo.find({
       where: {
         parentTweetId: IsNull(), // Select top level tweets
@@ -28,10 +34,13 @@ export class TweetService {
       },
       order: {
         createdAt: 'DESC',
-        replies: {
-          createdAt: 'DESC',
-        },
+        // This is causing a bug...
+        // replies: {
+        //   createdAt: 'DESC',
+        // },
       },
+      take: dto.count,
+      skip: dto.offset,
     });
 
     // Order by number of likes DESC

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { Emitters } from '../../emitters/emitters';
 import { AuthService } from '../../service/auth.service';
 import { MessageService } from '../../service/message.service';
@@ -11,11 +10,7 @@ import { MessageService } from '../../service/message.service';
 export class NavComponent implements OnInit {
   isUserAuthenticated = false;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private messageService: MessageService
-  ) {}
+  constructor(private authService: AuthService, private messageService: MessageService) {}
 
   ngOnInit(): void {
     Emitters.authEmitter.subscribe((auth: boolean) => {

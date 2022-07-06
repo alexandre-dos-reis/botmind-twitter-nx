@@ -36,5 +36,5 @@ export class Tweet extends BaseEntity {
   parentTweet: Tweet;
 
   @Transform(({ obj }) => obj['replies'] && obj['replies'].length)
-  repliesCount = 0
+  repliesCount = 0;
 }
