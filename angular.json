@@ -6,5 +6,6 @@
     "backend": "apps/backend",
     "frontend": "apps/frontend",
     "frontend-e2e": "apps/frontend-e2e"
-  }
+  },
+  "scripts": ["./node_modules/angular-dark-mode/angular-dark-mode.js"]
 }

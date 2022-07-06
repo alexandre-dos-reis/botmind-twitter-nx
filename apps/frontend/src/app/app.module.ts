@@ -16,6 +16,7 @@ import { InputComponent } from './components/form/input/input.component';
 import { TweetComponent } from './components/tweet/tweet.component';
 import { DateAgoPipe } from './pipe/date-ago.pipe';
 import { ReplyComponent } from './components/reply/reply.component';
+import { DarkModeToggleComponent } from './components/dark-mode-toggle/dark-mode-toggle.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { ReplyComponent } from './components/reply/reply.component';
     TweetComponent,
     DateAgoPipe,
     ReplyComponent,
+    DarkModeToggleComponent,
   ],
   imports: [
     BrowserModule,
