@@ -35,5 +35,5 @@ export interface Tweet {
 
 export interface TweetsResponse {
   tweets: Tweet[];
-  tweetsCount: number;
+  totalTweets: number;
 }

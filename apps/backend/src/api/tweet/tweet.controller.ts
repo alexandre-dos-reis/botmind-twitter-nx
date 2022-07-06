@@ -26,7 +26,7 @@ export class TweetController {
   @UseInterceptors(ClassSerializerInterceptor)
   async findAll(@GetUser() user: User, @Query() dto: TweetDtoQuery): Promise<TweetsResponse> {
     return {
-      tweetsCount: await this.tweetService.countAllTweets(),
+      totalTweets: await this.tweetService.countAllTweets(),
       tweets: await this.tweetService.findByQuery(dto, user),
     };
   }
