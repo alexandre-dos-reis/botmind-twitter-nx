@@ -17,6 +17,7 @@ import { UserService } from '../../service/user.service';
 export class TweetComponent implements OnInit {
   @Output() delete: EventEmitter<Tweet> = new EventEmitter();
   @Input() tweet!: Tweet;
+
   isUserTheAuthor = false;
   isUserLoggedIn = false;
   isCurrentUserHasLiked = false;
@@ -25,6 +26,7 @@ export class TweetComponent implements OnInit {
   isCollapsed = true;
   editMode = false;
   showEditorReply = true;
+  replies: Reply[] = [];
 
   formReply!: FormGroup;
   formReplyErrors!: FormErrors;
@@ -51,6 +53,7 @@ export class TweetComponent implements OnInit {
     this.isCurrentUserHasLiked = this.tweet.isCurrentUserHasLiked;
     this.likesCount = this.tweet.likesCount;
     this.repliesCount = this.tweet.repliesCount;
+    this.replies = this.tweet.replies;
 
     const formItemsReply = {
       content: '',
@@ -118,6 +121,7 @@ export class TweetComponent implements OnInit {
         next: (res) => {
           this.tweet = res.tweet;
           this.editMode = false;
+          this.showEditorReply = true;
           this.messageService.add({
             message: 'Le tweet a bien été modifié.',
             type: 'success',
@@ -134,7 +138,7 @@ export class TweetComponent implements OnInit {
       .createReply(this.tweet, this.formReply.getRawValue() as TweetDtoRequest)
       .subscribe({
         next: (res) => {
-          this.tweet.replies.push(res.reply);
+          this.replies.push(res.reply);
           this.repliesCount += 1;
           this.formReply.reset();
           this.messageService.add({
@@ -149,7 +153,7 @@ export class TweetComponent implements OnInit {
   }
 
   onDeleteReply(reply: Reply) {
-    this.tweet.replies = this.tweet.replies.filter((r) => r.id !== reply.id);
-    this.repliesCount -= 1
+    this.replies = this.replies.filter((r) => r.id !== reply.id);
+    this.repliesCount -= 1;
   }
 }
