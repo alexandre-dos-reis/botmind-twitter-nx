@@ -1,0 +1,23 @@
+---
+version: '3.7'
+services:
+  bt-postgre:
+    container_name: bt-postgre
+    image: postgres:14
+    networks:
+      - bt-backend
+    volumes:
+      - ./docker-volumes/bm-postgre:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - ${DB_PORT}:5432
+    restart: unless-stopped
+  
+  bt-front:
+  bt-back:
+
+networks:
+  bt-backend: {}
