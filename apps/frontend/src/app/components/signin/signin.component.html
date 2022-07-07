@@ -1,12 +1,12 @@
-<form [formGroup]="form" (submit)="onSubmit()">
+<form [formGroup]="form" (submit)="onSubmit()" class="d-flex flex-column align-items-center">
     <h1 class="h3 mb-3 fw-normal">Se connecter</h1>
 
-    <div class="mb-3">
+    <div class="mb-3 w-50">
         <input formControlName="email" type="email" class="form-control darkable" placeholder="Email" required>
         <span *ngIf="errors['email']" class="text-danger">{{errors['email']}}</span>
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3 w-50">
         <input formControlName="password" type="password" class="form-control darkable" placeholder="Mot de passe" required>
         <span *ngIf="errors['password']" class="text-danger">{{errors['password']}}</span>
     </div>
