@@ -78,6 +78,7 @@ export class TweetService {
       where: { id },
       relations: {
         author: true,
+        replies: true,
       },
     });
 
@@ -92,17 +93,27 @@ export class TweetService {
     return tweet;
   }
 
-  async delete(user: User, id: number): Promise<{ deleted: boolean }> {
-    await this.findTweet(id, user);
+  async delete(user: User, id: number): Promise<boolean> {
+    if (!user) {
+      throw new ForbiddenException();
+    }
 
-    const res = await this.tweetsRepo.delete(id);
+    const tweet = await this.findTweet(id, user);
 
-    return {
-      deleted: res.affected > 0 ? true : false,
-    };
+    if (tweet.replies.length > 0) {
+      this.tweetsRepo.delete(tweet.replies.map((r) => r.id));
+    }
+
+    const res = await this.tweetsRepo.delete(tweet.id);
+
+    return res.affected > 0 ? true : false;
   }
 
   async update(user: User, dto: TweetDtoRequest, id: number): Promise<Tweet> {
+    if (!user) {
+      throw new ForbiddenException();
+    }
+
     const tweet = await this.findTweet(id, user);
 
     return this.tweetsRepo.save({
@@ -123,7 +134,7 @@ export class TweetService {
       repliesCount: 0,
       likesCount: 0,
       replies: [],
-      likes: []
+      likes: [],
     });
   }
 

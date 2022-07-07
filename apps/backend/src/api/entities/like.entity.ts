@@ -13,6 +13,6 @@ export class Like {
   @ManyToOne(() => User, (user) => user.followers)
   lover: User;
 
-  @ManyToOne(() => Tweet, (tweet) => tweet.likes)
+  @ManyToOne(() => Tweet, (tweet) => tweet.likes, {onDelete: 'CASCADE'})
   tweet: Tweet;
 }

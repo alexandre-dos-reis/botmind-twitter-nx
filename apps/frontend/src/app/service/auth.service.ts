@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import {
   SignInDtoRequest,
   SignInResponse,
@@ -12,14 +11,18 @@ import { Observable } from 'rxjs';
 import { JwtService } from './jwt.service';
 import { environment as env } from '../../environments/environment';
 import { Emitters } from '../emitters/emitters';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  currentUser!: UserProfileResponse;
+  public currentUser!: UserProfileResponse;
 
-  constructor(private http: HttpClient, private jwtService: JwtService) {}
+  constructor(
+    private http: HttpClient,
+    private jwtService: JwtService,
+  ) {}
 
   signUp(user: SignUpDtoRequest) {
     return this.http.post<SignUpResponse>(`${env.apiEndPoint}/auth/signup`, user);

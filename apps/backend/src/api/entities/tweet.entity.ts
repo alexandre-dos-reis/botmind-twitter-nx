@@ -12,11 +12,11 @@ export class Tweet extends BaseEntity {
   @Column()
   image: string;
 
-  @ManyToOne(() => User, (user) => user.tweets)
+  @ManyToOne(() => User, (user) => user.tweets, {onDelete: 'CASCADE'})
   author: User;
 
   @Exclude({ toPlainOnly: true })
-  @OneToMany(() => Like, (like) => like.tweet)
+  @OneToMany(() => Like, (like) => like.tweet, {onDelete: 'CASCADE'})
   likes: Like[];
 
   @Transform(({ obj }) => obj['likes'] && obj['likes'].length)
@@ -28,7 +28,7 @@ export class Tweet extends BaseEntity {
   @Column({ nullable: true })
   parentTweetId: number;
 
-  @OneToMany(() => Tweet, (tweet) => tweet.parentTweet)
+  @OneToMany(() => Tweet, (tweet) => tweet.parentTweet, {onDelete: 'CASCADE'})
   replies: Tweet[];
 
   @ManyToOne(() => Tweet, (tweet) => tweet.replies)

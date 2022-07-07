@@ -9,8 +9,10 @@ import {
   Tweet,
   Reply,
   CreateReplyResponse,
+  EditTweetResponse,
+  DeleteTweetResponse,
 } from '@botmind-twitter-nx/api-interface';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment as env } from '../../environments/environment';
 import { Emitters } from '../emitters/emitters';
 import { JwtService } from './jwt.service';
@@ -26,10 +28,21 @@ export class TweetService {
   }
 
   getTweets(dto: TweetDtoQuery): Observable<TweetsResponse> {
-    return this.http.get<TweetsResponse>(`${env.apiEndPoint}/tweets`, {
-      params: new HttpParams().append('count', dto.count).append('offset', dto.offset),
-      headers: this.isUserLoggedIn ? this.jwtService.getHeaderWithToken() : {},
-    });
+    return this.http
+      .get<TweetsResponse>(`${env.apiEndPoint}/tweets`, {
+        params: new HttpParams().append('count', dto.count).append('offset', dto.offset),
+        headers: this.isUserLoggedIn ? this.jwtService.getHeaderWithToken() : {},
+      }) // Order replies by date DESC
+      .pipe(
+        map((res) => {
+          res.tweets.map((t) =>
+            t.replies.sort(
+              (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            )
+          );
+          return res;
+        })
+      );
   }
 
   createTweet(dto: TweetDtoRequest): Observable<CreateTweetResponse> {
@@ -40,6 +53,22 @@ export class TweetService {
       },
       { headers: this.jwtService.getHeaderWithToken() }
     );
+  }
+
+  editTweet(tweet: Tweet, dto: TweetDtoRequest): Observable<EditTweetResponse> {
+    return this.http.patch<EditTweetResponse>(
+      `${env.apiEndPoint}/tweets/${tweet.id}`,
+      {
+        content: dto.content,
+      },
+      { headers: this.jwtService.getHeaderWithToken() }
+    );
+  }
+
+  deleteTweet(tweet: Tweet): Observable<DeleteTweetResponse> {
+    return this.http.delete<DeleteTweetResponse>(`${env.apiEndPoint}/tweets/${tweet.id}`, {
+      headers: this.jwtService.getHeaderWithToken(),
+    });
   }
 
   createReply(tweet: Tweet, dto: TweetDtoRequest): Observable<CreateReplyResponse> {

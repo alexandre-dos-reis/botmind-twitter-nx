@@ -21,6 +21,8 @@ import {
   CreateTweetResponse,
   HandleLikeResponse,
   CreateReplyResponse,
+  EditTweetResponse,
+  DeleteTweetResponse,
 } from '@botmind-twitter-nx/api-interface';
 import { TweetService } from './tweet.service';
 
@@ -39,13 +41,21 @@ export class TweetController {
   }
 
   @Delete(':id')
-  async delete(@GetUser() user: User, @Param('id') id: number) {
-    return this.tweetService.delete(user, id);
+  async delete(@GetUser() user: User, @Param('id') id: number): Promise<DeleteTweetResponse> {
+    return {
+      isTweetDeleted: await this.tweetService.delete(user, id),
+    };
   }
 
   @Patch(':id')
-  async update(@GetUser() user: User, @Body() dto: TweetDtoRequest, @Param('id') id: number) {
-    return this.tweetService.update(user, dto, id);
+  async update(
+    @GetUser() user: User,
+    @Body() dto: TweetDtoRequest,
+    @Param('id') id: number
+  ): Promise<EditTweetResponse> {
+    return {
+      tweet: await this.tweetService.update(user, dto, id),
+    };
   }
 
   @Post()
@@ -71,10 +81,4 @@ export class TweetController {
   async like(@GetUser() user: User, @Param('id') id: number): Promise<HandleLikeResponse> {
     return this.tweetService.like(user, id);
   }
-
-  // Subscription to users
-  // @Post(':id/subscribe')
-  // subscribe(@GetUser() user: User, @Param('id') id: number) {
-  //   return {};
-  // }
 }

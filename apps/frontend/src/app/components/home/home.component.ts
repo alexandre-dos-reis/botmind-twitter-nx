@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { TweetDtoRequest, Tweet, ServerError } from '@botmind-twitter-nx/api-interface';
-import { map } from 'rxjs';
 import { Emitters } from '../../emitters/emitters';
 import { handleServerError } from '../../helpers/Errors/handleServerError';
 import { createErrorItems } from '../../helpers/Form';
@@ -20,21 +19,22 @@ export class HomeComponent implements OnInit {
   tweetsPerCall = 10;
   offset = 0;
   isUserLoggedIn = false;
+  isLoading = true;
+  userId!: number;
   form!: FormGroup;
   errors!: FormErrors;
 
   constructor(
     private tweetsService: TweetService,
     private formBuilder: FormBuilder,
-    private authService: AuthService,
-    private messageService: MessageService
-  ) {
+    private messageService: MessageService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
     Emitters.authEmitter.subscribe((auth: boolean) => {
       this.isUserLoggedIn = auth;
     });
-  }
-
-  ngOnInit(): void {
     this.authService.resumeSession();
     this.getTweets();
 
@@ -52,21 +52,11 @@ export class HomeComponent implements OnInit {
   getTweets() {
     this.tweetsService
       .getTweets({ count: this.tweetsPerCall, offset: this.offset })
-      // Order replies by date DESC
-      .pipe(
-        map((res) => {
-          res.tweets.map((t) =>
-            t.replies.sort(
-              (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-            )
-          );
-          return res;
-        })
-      )
       .subscribe((res) => {
         this.tweets = this.tweets.concat(res.tweets);
         this.totalTweets = res.totalTweets;
         this.offset += this.tweetsPerCall;
+        this.isLoading = false;
       });
   }
 
@@ -81,10 +71,18 @@ export class HomeComponent implements OnInit {
       next: (res) => {
         this.tweets.unshift(res.tweet);
         this.form.reset();
+        this.messageService.add({
+          message: 'Votre tweet a bien été publié.',
+          type: 'success',
+        });
       },
       error: ({ error }: { error: ServerError }) => {
         handleServerError(error, this.errors, this.messageService);
       },
     });
+  }
+
+  onDeleteTweet(tweet: Tweet) {
+    this.tweets = this.tweets.filter((t) => t.id !== tweet.id);
   }
 }
