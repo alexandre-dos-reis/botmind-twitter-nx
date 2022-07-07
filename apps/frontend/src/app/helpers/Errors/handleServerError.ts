@@ -12,7 +12,7 @@ export const handleServerError = (
     mapHttpErrorToErrorForm(serverError, errorItems);
   } else {
     messageService.add({
-      message: serverError.message as string,
+      message: serverError.message as string + ' !',
       type: 'danger',
     });
   }

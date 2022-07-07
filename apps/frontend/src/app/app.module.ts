@@ -42,7 +42,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     NgbModule,
     AppRoutingModule,
     HttpClientModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -34,22 +34,20 @@
             <span class="me-1">{{ likesCount }}</span><i class="bi bi-balloon-heart-fill"
                 style="font-size: 1.2rem;"></i>
         </div>
+
         <div *ngIf="isUserLoggedIn && isUserTheAuthor && !editMode" class="ms-3" (click)="onEdit($event)">
             <button type="button" class="btn btn-outline-secondary btn-sm">Modifier</button>
         </div>
         <div *ngIf="isUserLoggedIn && isUserTheAuthor && !editMode" class="ms-3" (click)="onDelete($event)">
             <button type="button" class="btn btn-outline-danger btn-sm">Supprimer</button>
         </div>
-        <!-- <button *ngIf="isUserLoggedIn && isUserTheAuthor && !editMode" class="btn btn-outline-danger btn-sm ms-2"
-            (click)="confirmDelete('focusFirst', $event)">
-            <div>Supprimer</div>
-        </button> -->
+
     </div>
 </div>
 <div class="mx-3" #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed">
-    <app-reply *ngFor="let reply of tweet.replies" [reply]="reply"></app-reply>
+    <app-reply *ngFor="let reply of tweet.replies" [reply]="reply" (delete)="onDeleteReply(reply)"></app-reply>
 
-    <form [formGroup]="formReply" (submit)="handleNewReply()" class="form-floating mb-1" *ngIf="isUserLoggedIn">
+    <form [formGroup]="formReply" (submit)="handleNewReply()" class="form-floating mb-1" *ngIf="isUserLoggedIn && showEditorReply">
         <textarea formControlName="content" class="form-control" id="floatingTextarea2"
             style="height: 100px"></textarea>
         <label for="floatingTextarea2">Ecrivez une réponse...</label>

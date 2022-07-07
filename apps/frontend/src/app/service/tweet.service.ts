@@ -11,6 +11,7 @@ import {
   CreateReplyResponse,
   EditTweetResponse,
   DeleteTweetResponse,
+  EditReplyResponse,
 } from '@botmind-twitter-nx/api-interface';
 import { map, Observable } from 'rxjs';
 import { environment as env } from '../../environments/environment';
@@ -65,7 +66,7 @@ export class TweetService {
     );
   }
 
-  deleteTweet(tweet: Tweet): Observable<DeleteTweetResponse> {
+  deleteTweet(tweet: Tweet | Reply): Observable<DeleteTweetResponse> {
     return this.http.delete<DeleteTweetResponse>(`${env.apiEndPoint}/tweets/${tweet.id}`, {
       headers: this.jwtService.getHeaderWithToken(),
     });
@@ -74,6 +75,16 @@ export class TweetService {
   createReply(tweet: Tweet, dto: TweetDtoRequest): Observable<CreateReplyResponse> {
     return this.http.post<CreateReplyResponse>(
       `${env.apiEndPoint}/tweets/${tweet.id}/reply`,
+      {
+        content: dto.content,
+      },
+      { headers: this.jwtService.getHeaderWithToken() }
+    );
+  }
+
+  editReply(reply: Reply, dto: TweetDtoRequest): Observable<EditReplyResponse> {
+    return this.http.patch<EditReplyResponse>(
+      `${env.apiEndPoint}/tweets/${reply.id}`,
       {
         content: dto.content,
       },

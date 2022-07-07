@@ -78,7 +78,9 @@ export class TweetService {
       where: { id },
       relations: {
         author: true,
-        replies: true,
+        replies: {
+          author: true
+        },
       },
     });
 

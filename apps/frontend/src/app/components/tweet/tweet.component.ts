@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ServerError, Tweet, TweetDtoRequest } from '@botmind-twitter-nx/api-interface';
+import { Reply, ServerError, Tweet, TweetDtoRequest } from '@botmind-twitter-nx/api-interface';
 import { Emitters } from '../../emitters/emitters';
 import { handleServerError } from '../../helpers/Errors/handleServerError';
 import { createErrorItems } from '../../helpers/Form';
@@ -24,6 +24,7 @@ export class TweetComponent implements OnInit {
   repliesCount!: number;
   isCollapsed = true;
   editMode = false;
+  showEditorReply = true;
 
   formReply!: FormGroup;
   formReplyErrors!: FormErrors;
@@ -49,7 +50,7 @@ export class TweetComponent implements OnInit {
     this.authService.resumeSession();
     this.isCurrentUserHasLiked = this.tweet.isCurrentUserHasLiked;
     this.likesCount = this.tweet.likesCount;
-    this.repliesCount = this.tweet.repliesCount
+    this.repliesCount = this.tweet.repliesCount;
 
     const formItemsReply = {
       content: '',
@@ -85,6 +86,7 @@ export class TweetComponent implements OnInit {
   onEdit(e: MouseEvent) {
     e.stopPropagation();
     this.editMode = true;
+    this.showEditorReply = false;
   }
 
   onDelete(e: MouseEvent) {
@@ -94,19 +96,16 @@ export class TweetComponent implements OnInit {
         this.delete.emit(this.tweet);
         this.messageService.add({
           message: 'Le tweet a bien été supprimé.',
-          type: 'success'
-        })
+          type: 'success',
+        });
       }
     });
   }
 
-  // confirmDelete(name: string, e: MouseEvent) {
-  //   e.stopPropagation()
-  // }
-
   handleCancelEdit(e: MouseEvent) {
     e.stopPropagation();
     this.editMode = false;
+    this.showEditorReply = true;
     this.formEdit.patchValue({
       content: this.tweet.content,
     });
@@ -121,8 +120,8 @@ export class TweetComponent implements OnInit {
           this.editMode = false;
           this.messageService.add({
             message: 'Le tweet a bien été modifié.',
-            type: 'success'
-          })
+            type: 'success',
+          });
         },
         error: ({ error }: { error: ServerError }) => {
           handleServerError(error, this.formReplyErrors, this.messageService);
@@ -136,17 +135,21 @@ export class TweetComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.tweet.replies.push(res.reply);
-          this.repliesCount += 1
+          this.repliesCount += 1;
           this.formReply.reset();
           this.messageService.add({
             message: 'Votre réponse a bien été publié.',
-            type: 'success'
-          })
-          
+            type: 'success',
+          });
         },
         error: ({ error }: { error: ServerError }) => {
           handleServerError(error, this.formReplyErrors, this.messageService);
         },
       });
+  }
+
+  onDeleteReply(reply: Reply) {
+    this.tweet.replies = this.tweet.replies.filter((r) => r.id !== reply.id);
+    this.repliesCount -= 1
   }
 }

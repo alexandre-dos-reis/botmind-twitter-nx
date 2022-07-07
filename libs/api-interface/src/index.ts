@@ -12,5 +12,6 @@ export * from './lib/response/error.response';
 export * from './lib/response/create-tweet.response';
 export * from './lib/response/delete-tweet.response';
 export * from './lib/response/edit-tweet.response';
+export * from './lib/response/edit-reply.response';
 export * from './lib/response/create-reply.response';
 export * from './lib/response/handle-like-response';
