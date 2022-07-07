@@ -2,7 +2,11 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { Tweet, User, Like } from '../entities';
-import { TweetDtoQuery, TweetDtoRequest } from '@botmind-twitter-nx/api-interface';
+import {
+  HandleLikeResponse,
+  TweetDtoQuery,
+  TweetDtoRequest,
+} from '@botmind-twitter-nx/api-interface';
 
 @Injectable()
 export class TweetService {
@@ -17,7 +21,7 @@ export class TweetService {
     });
   }
 
-  async findByQuery(dto: TweetDtoQuery, currentUser?: User) {
+  async findByQuery(dto: TweetDtoQuery, currentUser?: User): Promise<Tweet[]> {
     const tweets = await this.tweetsRepo.find({
       where: {
         parentTweetId: IsNull(), // Select top level tweets
@@ -28,13 +32,15 @@ export class TweetService {
         },
         author: true,
         replies: {
-          likes: true,
+          likes: {
+            lover: true,
+          },
           author: true,
         },
       },
       order: {
         createdAt: 'DESC',
-        // This is causing a bug...
+        // This is causing a bug... Replies order will be handle by front app
         // replies: {
         //   createdAt: 'DESC',
         // },
@@ -50,9 +56,15 @@ export class TweetService {
       return tweets;
     }
 
+    // Checks to know is user liked Tweets and Replies...
     return tweets.map((tweet) => {
       const TweetLiked = tweet.likes.find((like) => like.lover.id === currentUser.id);
       if (TweetLiked) tweet.isCurrentUserHasLiked = true;
+      tweet.replies.map((r) => {
+        const replyLiked = r.likes.find((like) => like.lover.id === currentUser.id);
+        if (replyLiked) r.isCurrentUserHasLiked = true;
+        return r;
+      });
       return tweet;
     });
   }
@@ -108,10 +120,14 @@ export class TweetService {
       author: user,
       content: dto.content,
       image: '',
+      repliesCount: 0,
+      likesCount: 0,
+      replies: [],
+      likes: []
     });
   }
 
-  async like(user: User, tweetId: number): Promise<{ isLiked: boolean }> {
+  async like(user: User, tweetId: number): Promise<HandleLikeResponse> {
     if (!user) {
       throw new ForbiddenException();
     }
@@ -152,5 +168,20 @@ export class TweetService {
     }
 
     return { isLiked };
+  }
+
+  async createReply(user: User, tweetId: number, dto: TweetDtoRequest): Promise<Tweet> {
+    if (!user) {
+      throw new ForbiddenException();
+    }
+
+    return this.tweetsRepo.save({
+      author: user,
+      content: dto.content,
+      image: '',
+      parentTweetId: tweetId,
+      repliesCount: 0,
+      likesCount: 0,
+    });
   }
 }

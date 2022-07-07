@@ -10,13 +10,11 @@ import { MessageService } from '../../service/message.service';
 export class NavComponent implements OnInit {
   isUserAuthenticated = false;
 
-  constructor(private authService: AuthService, private messageService: MessageService) {}
-
-  ngOnInit(): void {
-    Emitters.authEmitter.subscribe((auth: boolean) => {
-      this.isUserAuthenticated = auth;
-    });
+  constructor(private authService: AuthService, private messageService: MessageService) {
+    Emitters.authEmitter.subscribe((auth: boolean) => (this.isUserAuthenticated = auth));
   }
+
+  ngOnInit(): void {}
 
   logout(): void {
     this.authService.logout();

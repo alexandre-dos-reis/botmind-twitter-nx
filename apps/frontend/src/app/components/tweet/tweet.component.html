@@ -1,20 +1,37 @@
 <div style="cursor: pointer;" class="list-group-item list-group-item-action" (click)="collapse.toggle()"
     [attr.aria-expanded]="!isCollapsed" aria-controls="collapseExample">
-    <p class="mb-1">{{ tweet.author.firstname }} {{ tweet.author.lastname }}</p>
+    <p class="mb-1">{{ tweet.author.firstname }} {{ tweet.author.lastname }} <span class="mx-3 text-secondary">{{ tweet.author.email }}</span></p>
     <div class="d-flex w-100 justify-content-between mb-2">
         <h5 class="mb-1">{{ tweet.content }}</h5>
         <small>{{ tweet.createdAt | dateAgo }}</small>
     </div>
     <div class="d-flex">
         <div class="badge bg-primary rounded-pill d-flex justify-content-center align-items-center">{{
-            tweet.repliesCount }} réponses</div>
-        <div style="cursor: pointer;"
-            class="badge bg-secondary rounded-pill ms-3 d-flex justify-content-center align-items-center">
-            <span class="me-1">{{ tweet.likesCount }}</span><i class="bi bi-balloon-heart-fill"
+            tweet.repliesCount }} <i class="bi bi-reply ms-1" style="font-size: 1.3rem;"></i></div>
+        <div *ngIf="isCurrentUserHasLiked" style="cursor: pointer;" (click)="handleLike($event)"
+            class="badge bg-danger rounded-pill ms-3 d-flex justify-content-center align-items-center">
+            <span class="me-1">{{ likesCount }}</span><i class="bi bi-balloon-heart-fill"
                 style="font-size: 1.2rem;"></i>
         </div>
+        <div *ngIf="!isCurrentUserHasLiked" style="cursor: pointer;" (click)="handleLike($event)"
+            class="badge bg-secondary rounded-pill ms-3 d-flex justify-content-center align-items-center">
+            <span class="me-1">{{ likesCount }}</span><i class="bi bi-balloon-heart-fill"
+                style="font-size: 1.2rem;"></i>
+        </div>
+        <!-- <div *ngIf="isUserLoggedIn" class="ms-3" (click)="handleShowEditor($event)">
+            <i class="bi bi-reply" style="font-size: 1.5rem;"></i>
+        </div> -->
     </div>
 </div>
 <div class="mx-3" #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed">
     <app-reply *ngFor="let reply of tweet.replies" [reply]="reply"></app-reply>
+
+    <form [formGroup]="formReply" (submit)="handleNewReply()" class="form-floating mb-1" *ngIf="isUserLoggedIn">
+        <textarea formControlName="content" class="form-control" id="floatingTextarea2"
+        style="height: 100px"></textarea>
+        <label for="floatingTextarea2">Ecrivez une réponse...</label>
+        <button type="submit" class="w-30 btn btn-primary mt-1">Répondre</button>
+        <span *ngIf="errors['content']" class="text-danger ms-3">{{errors['content']}}</span>
+    </form>
+    
 </div>

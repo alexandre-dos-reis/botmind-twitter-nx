@@ -11,6 +11,7 @@ import {
 import { Observable } from 'rxjs';
 import { JwtService } from './jwt.service';
 import { environment as env } from '../../environments/environment';
+import { Emitters } from '../emitters/emitters';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,7 @@ import { environment as env } from '../../environments/environment';
 export class AuthService {
   currentUser!: UserProfileResponse;
 
-  constructor(private http: HttpClient, private router: Router, private jwtService: JwtService) {}
+  constructor(private http: HttpClient, private jwtService: JwtService) {}
 
   signUp(user: SignUpDtoRequest) {
     return this.http.post<SignUpResponse>(`${env.apiEndPoint}/auth/signup`, user);
@@ -37,9 +38,14 @@ export class AuthService {
 
   logout() {
     this.jwtService.deleteToken();
+    Emitters.authEmitter.emit(false);
   }
 
-  get isLoggedIn(): boolean {
-    return this.jwtService.getToken() !== null ? true : false;
+  resumeSession() {
+    if (this.jwtService.getToken() !== null) {
+      Emitters.authEmitter.emit(true);
+    } else {
+      Emitters.authEmitter.emit(false);
+    }
   }
 }

@@ -1,8 +1,8 @@
 <form [formGroup]="form" (submit)="onSubmit()">
     <h1 class="h3 mb-3 fw-normal">Se connecter</h1>
 
-    <input formControlName="email" type="email" class="form-control" placeholder="Email" required>
     <div class="mb-3">
+        <input formControlName="email" type="email" class="form-control" placeholder="Email" required>
         <span *ngIf="errors['email']" class="text-danger">{{errors['email']}}</span>
     </div>
 
@@ -11,5 +11,5 @@
         <span *ngIf="errors['password']" class="text-danger">{{errors['password']}}</span>
     </div>
 
-    <button type="submit" class="w-100 btn btn-lg btn-primary">Se connecter</button>
+    <button type="submit" class="w-30 btn btn-primary">Se connecter</button>
 </form>

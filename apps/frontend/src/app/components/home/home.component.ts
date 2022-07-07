@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Tweet } from '@botmind-twitter-nx/api-interface';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { TweetDtoRequest, Tweet, ServerError } from '@botmind-twitter-nx/api-interface';
 import { map } from 'rxjs';
 import { Emitters } from '../../emitters/emitters';
+import { handleServerError } from '../../helpers/Errors/handleServerError';
+import { createErrorItems } from '../../helpers/Form';
+import { FormErrors } from '../../helpers/types';
+import { AuthService } from '../../service/auth.service';
+import { MessageService } from '../../service/message.service';
 import { TweetService } from '../../service/tweet.service';
 
 @Component({
@@ -14,27 +20,44 @@ export class HomeComponent implements OnInit {
   tweetsPerCall = 10;
   offset = 0;
   isUserLoggedIn = false;
+  form!: FormGroup;
+  errors!: FormErrors;
 
-  constructor(private tweetsService: TweetService) {}
-
-  ngOnInit(): void {
-    this.getTweets();
+  constructor(
+    private tweetsService: TweetService,
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private messageService: MessageService
+  ) {
     Emitters.authEmitter.subscribe((auth: boolean) => {
       this.isUserLoggedIn = auth;
     });
   }
 
+  ngOnInit(): void {
+    this.authService.resumeSession();
+    this.getTweets();
+
+    const formItems = {
+      content: '',
+    };
+
+    this.form = this.formBuilder.group({
+      ...formItems,
+    } as TweetDtoRequest);
+
+    this.errors = createErrorItems(formItems);
+  }
+
   getTweets() {
     this.tweetsService
-      .getTweets({ count: this.tweetsPerCall, offset: this.offset }, this.isUserLoggedIn)
+      .getTweets({ count: this.tweetsPerCall, offset: this.offset })
       // Order replies by date DESC
       .pipe(
         map((res) => {
-          console.log(
-            res.tweets.map((t) =>
-              t.replies.sort(
-                (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-              )
+          res.tweets.map((t) =>
+            t.replies.sort(
+              (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
             )
           );
           return res;
@@ -51,5 +74,17 @@ export class HomeComponent implements OnInit {
     if (this.totalTweets >= this.offset) {
       this.getTweets();
     }
+  }
+
+  onSubmit() {
+    this.tweetsService.createTweet(this.form.getRawValue() as TweetDtoRequest).subscribe({
+      next: (res) => {
+        this.tweets.unshift(res.tweet);
+        this.form.reset();
+      },
+      error: ({ error }: { error: ServerError }) => {
+        handleServerError(error, this.errors, this.messageService);
+      },
+    });
   }
 }

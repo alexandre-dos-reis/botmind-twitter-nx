@@ -14,7 +14,14 @@ import {
 import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
 import { User } from '../entities';
-import { TweetDtoRequest, TweetsResponse, TweetDtoQuery } from '@botmind-twitter-nx/api-interface';
+import {
+  TweetDtoRequest,
+  TweetsResponse,
+  TweetDtoQuery,
+  CreateTweetResponse,
+  HandleLikeResponse,
+  CreateReplyResponse,
+} from '@botmind-twitter-nx/api-interface';
 import { TweetService } from './tweet.service';
 
 @Controller('tweets')
@@ -32,23 +39,36 @@ export class TweetController {
   }
 
   @Delete(':id')
-  delete(@GetUser() user: User, @Param('id') id: number) {
+  async delete(@GetUser() user: User, @Param('id') id: number) {
     return this.tweetService.delete(user, id);
   }
 
   @Patch(':id')
-  update(@GetUser() user: User, @Body() dto: TweetDtoRequest, @Param('id') id: number) {
+  async update(@GetUser() user: User, @Body() dto: TweetDtoRequest, @Param('id') id: number) {
     return this.tweetService.update(user, dto, id);
   }
 
   @Post()
-  create(@GetUser() user: User, @Body() dto: TweetDtoRequest) {
-    return this.tweetService.create(user, dto);
+  async create(@GetUser() user: User, @Body() dto: TweetDtoRequest): Promise<CreateTweetResponse> {
+    return {
+      tweet: await this.tweetService.create(user, dto),
+    };
+  }
+
+  @Post(':id/reply')
+  async createReply(
+    @GetUser() user: User,
+    @Param('id') tweetId: number,
+    @Body() dto: TweetDtoRequest
+  ): Promise<CreateReplyResponse> {
+    return {
+      reply: await this.tweetService.createReply(user, tweetId, dto),
+    };
   }
 
   // Likes
-  @Post(':id/like')
-  like(@GetUser() user: User, @Param('id') id: number) {
+  @Patch(':id/like')
+  async like(@GetUser() user: User, @Param('id') id: number): Promise<HandleLikeResponse> {
     return this.tweetService.like(user, id);
   }
 

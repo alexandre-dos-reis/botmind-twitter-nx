@@ -51,7 +51,7 @@ export class SigninComponent implements OnInit {
         this.authService.getUserProfile().subscribe((res: UserProfileResponse) => {
           this.authService.currentUser = res;
           this.messageService.add({
-            message: `Bonjour ${this.authService.currentUser.firstname} ${this.authService.currentUser.firstname}, vous êtes connecté.`,
+            message: `Bonjour ${this.authService.currentUser.firstname} ${this.authService.currentUser.lastname}, vous êtes connecté.`,
             type: 'success',
           });
           Emitters.authEmitter.emit(true);

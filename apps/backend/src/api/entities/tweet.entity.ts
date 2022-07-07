@@ -19,7 +19,7 @@ export class Tweet extends BaseEntity {
   @OneToMany(() => Like, (like) => like.tweet)
   likes: Like[];
 
-  @Transform(({ obj }) => obj['likes'].length)
+  @Transform(({ obj }) => obj['likes'] && obj['likes'].length)
   likesCount = 0;
 
   isCurrentUserHasLiked = false;

@@ -15,11 +15,14 @@ export class JwtService {
   getToken(): string | null {
     return localStorage.getItem(this.accessTokenKey);
   }
+
   deleteToken() {
     localStorage.removeItem(this.accessTokenKey);
   }
 
   getHeaderWithToken(): HttpHeaders {
-    return new HttpHeaders().set('Authorization', `Bearer ${this.getToken()}`);
+    return new HttpHeaders()
+      .set('Authorization', `Bearer ${this.getToken()}`)
+      .set('Content-Type', 'application/json');
   }
 }
