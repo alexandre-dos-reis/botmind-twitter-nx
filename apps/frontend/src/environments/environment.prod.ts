@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiEndPoint: 'http://localhost:3333/api'
+  apiEndPoint: process.env['NG_BACKEND_API_PRODUCTION']
 };
