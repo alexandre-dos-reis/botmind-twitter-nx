@@ -8,18 +8,19 @@ services:
     networks:
       - bt-backend
     volumes:
-      - bt-backend:/var/lib/postgresql/data
+      - ./docker-volumes/bm-postgre:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}
+    ports:
+      - ${DB_PORT}:5432
     restart: unless-stopped
   
   bt-backend:
     container_name: bt-backend
     networks:
       - bt-backend
-      - caddy
     build:
       context: .
       dockerfile: docker/Dockerfile
@@ -28,26 +29,17 @@ services:
         - BACKEND_PORT=${BACKEND_PORT}
     environment:
       - DB_HOST=bt-postgre
-    labels:
-      caddy: ${BACKEND_URL}
-      caddy.reverse_proxy: "{{upstreams 3333}}"
+    ports:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
 
   bt-frontend:
     container_name: bt-frontend
-    networks:
-      - caddy
     build: 
       context: .
       dockerfile: docker/Dockerfile
       target: frontend
-    labels:
-      caddy: ${FRONTEND_URL}
-      caddy.reverse_proxy: "{{upstreams 8043}}"
+    ports: 
+      - 8043:8043
 
 networks:
   bt-backend: {}
-  caddy:
-    external: true  
-
-volumes:
-  bt-backend: 

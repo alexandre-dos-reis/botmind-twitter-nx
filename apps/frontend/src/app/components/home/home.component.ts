@@ -46,8 +46,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
     this.authService.resumeSession();
 
-    console.log('>>> NG_BACKEND_API', process.env['NG_BACKEND_API']);
-
     this.getTweets();
 
     const formItems = {
