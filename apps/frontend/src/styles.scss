@@ -16,8 +16,10 @@ body {
     }
 
     .darkable {
-        background-color: rgb(54, 54, 54);
-        color: rgb(217, 217, 217);
+        background-color: rgb(54, 54, 54) !important;
+        color: rgb(217, 217, 217) !important;
+
+
     }
 }
 

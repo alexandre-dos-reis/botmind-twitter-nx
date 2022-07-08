@@ -49,8 +49,6 @@ export class TweetComponent implements OnInit, OnDestroy {
     if (this.isUserLoggedIn && this.tweet.author.id === this.userService.getUser()?.id) {
       this.isUserTheAuthor = true;
     }
-    
-    console.log(this.isUserTheAuthor)
 
     this.isCurrentUserHasLiked = this.tweet.isCurrentUserHasLiked;
     this.likesCount = this.tweet.likesCount;
