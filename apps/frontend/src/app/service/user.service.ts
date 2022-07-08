@@ -8,7 +8,8 @@ import { AuthService } from './auth.service';
 export class UserService {
   private userKey = 'user';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) {
+  }
 
   storeUser(res: UserProfileResponse) {
     localStorage.setItem(this.userKey, JSON.stringify(res));

@@ -15,6 +15,6 @@
         <span *ngIf="errors['content']" class="text-danger ms-3">{{errors['content']}}</span>
     </form>
 
-    <app-tweet *ngFor="let tweet of tweets" [tweet]="tweet" (delete)="onDeleteTweet(tweet)">
+    <app-tweet *ngFor="let tweet of tweets" [isUserLoggedIn]="isUserLoggedIn" [tweet]="tweet" (delete)="onDeleteTweet(tweet)">
     </app-tweet>
 </div>

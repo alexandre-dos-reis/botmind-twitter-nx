@@ -1,6 +1,7 @@
 ---
 version: '3.7'
 services:
+
   bm-postgre:
     container_name: bm-postgre
     image: postgres:14
@@ -12,7 +13,7 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}
-    ports:
+    ports:  
       - ${DB_PORT}:5432
     restart: unless-stopped
   

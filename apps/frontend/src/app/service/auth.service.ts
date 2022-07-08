@@ -11,7 +11,6 @@ import { Observable } from 'rxjs';
 import { JwtService } from './jwt.service';
 import { environment as env } from '../../environments/environment';
 import { Emitters } from '../emitters/emitters';
-import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root',

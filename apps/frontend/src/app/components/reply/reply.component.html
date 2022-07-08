@@ -35,10 +35,10 @@
                 <span class="me-1">{{ likesCount }}</span><i class="bi bi-balloon-heart-fill"
                     style="font-size: 1.2rem;"></i>
             </div>
-            <div *ngIf="isUserLoggedIn && isUserTheAuthor && !editMode" class="me-3" (click)="onEdit($event)">
+            <div *ngIf="isUserTheAuthor && isUserLoggedIn && !editMode" class="me-3" (click)="onEdit($event)">
                 <button type="button" class="btn btn-outline-secondary btn-sm">Modifier</button>
             </div>
-            <div *ngIf="isUserLoggedIn && isUserTheAuthor && !editMode" (click)="onDelete($event)">
+            <div *ngIf="isUserTheAuthor && isUserLoggedIn && !editMode" (click)="onDelete($event)">
                 <button type="button" class="btn btn-outline-danger btn-sm">Supprimer</button>
             </div>
         </div>

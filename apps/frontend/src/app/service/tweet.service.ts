@@ -28,11 +28,11 @@ export class TweetService {
     Emitters.authEmitter.subscribe((auth: boolean) => (this.isUserLoggedIn = auth));
   }
 
-  getTweets(dto: TweetDtoQuery): Observable<TweetsResponse> {
+  getTweets(dto: TweetDtoQuery, isUserLoggedIn: boolean): Observable<TweetsResponse> {
     return this.http
       .get<TweetsResponse>(`${env.apiEndPoint}/tweets`, {
         params: new HttpParams().append('count', dto.count).append('offset', dto.offset),
-        headers: this.isUserLoggedIn ? this.jwtService.getHeaderWithToken() : {},
+        headers: isUserLoggedIn ? this.jwtService.getHeaderWithToken() : {},
       }) // Order replies by date DESC
       .pipe(
         map((res) => {

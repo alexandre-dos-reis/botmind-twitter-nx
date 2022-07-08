@@ -24,6 +24,7 @@
     <div class="d-flex">
         <div class="badge bg-primary rounded-pill d-flex justify-content-center align-items-center">{{
             repliesCount }} <i class="bi bi-reply ms-1" style="font-size: 1.3rem;"></i></div>
+            
         <div *ngIf="isCurrentUserHasLiked" style="cursor: pointer;" (click)="handleLike($event)"
             class="badge bg-danger rounded-pill ms-3 d-flex justify-content-center align-items-center">
             <span class="me-1">{{ likesCount }}</span><i class="bi bi-balloon-heart-fill"
@@ -35,17 +36,17 @@
                 style="font-size: 1.2rem;"></i>
         </div>
 
-        <div *ngIf="isUserLoggedIn && isUserTheAuthor && !editMode" class="ms-3" (click)="onEdit($event)">
+        <div *ngIf="isUserTheAuthor && isUserLoggedIn && !editMode" class="ms-3" (click)="onEdit($event)">
             <button type="button" class="btn btn-outline-secondary btn-sm">Modifier</button>
         </div>
-        <div *ngIf="isUserLoggedIn && isUserTheAuthor && !editMode" class="ms-3" (click)="onDelete($event)">
+        <div *ngIf="isUserTheAuthor && isUserLoggedIn && !editMode" class="ms-3" (click)="onDelete($event)">
             <button type="button" class="btn btn-outline-danger btn-sm">Supprimer</button>
         </div>
 
     </div>
 </div>
 <div class="mx-3" #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed">
-    <app-reply *ngFor="let reply of replies" [reply]="reply" (delete)="onDeleteReply(reply)"></app-reply>
+    <app-reply *ngFor="let reply of replies" [isUserLoggedIn]="isUserLoggedIn" [reply]="reply" (delete)="onDeleteReply(reply)"></app-reply>
 
     <form [formGroup]="formReply" (submit)="handleNewReply()" class="form-floating mb-1" *ngIf="isUserLoggedIn && showEditorReply">
         <textarea formControlName="content" class="form-control darkable" id="floatingTextarea2"

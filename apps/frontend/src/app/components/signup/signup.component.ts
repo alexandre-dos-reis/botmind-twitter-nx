@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ServerError, SignUpDtoRequest } from '@botmind-twitter-nx/api-interface';
+import { Subscription } from 'rxjs';
 import { emptyErrorForm } from '../../helpers/Errors';
 import { handleServerError } from '../../helpers/Errors/handleServerError';
 import { createErrorItems } from '../../helpers/Form';
@@ -12,9 +13,10 @@ import { MessageService } from '../../service/message.service';
   selector: 'app-signup',
   templateUrl: './signup.component.html',
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   errors!: FormErrors;
+  subs: Subscription[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -37,21 +39,27 @@ export class SignupComponent implements OnInit {
     this.errors = createErrorItems(formItems);
   }
 
+  ngOnDestroy(): void {
+    this.subs.map(s => s.unsubscribe())
+  }
+
   onSubmit(): void {
-    this.authService.signUp(this.form.getRawValue() as SignUpDtoRequest).subscribe({
-      // on success
-      next: () => {
-        this.messageService.add({
-          type: 'success',
-          message: 'Votre compte a été créé.',
-        });
-        this.form.reset();
-        this.errors = emptyErrorForm(this.errors);
-      },
-      // on error
-      error: ({ error }: { error: ServerError }) => {
-        handleServerError(error, this.errors, this.messageService);
-      },
-    });
+    this.subs.push(
+      this.authService.signUp(this.form.getRawValue() as SignUpDtoRequest).subscribe({
+        // on success
+        next: () => {
+          this.messageService.add({
+            type: 'success',
+            message: 'Votre compte a été créé.',
+          });
+          this.form.reset();
+          this.errors = emptyErrorForm(this.errors);
+        },
+        // on error
+        error: ({ error }: { error: ServerError }) => {
+          handleServerError(error, this.errors, this.messageService);
+        },
+      })
+    );
   }
 }

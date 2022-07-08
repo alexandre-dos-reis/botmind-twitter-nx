@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -6,6 +6,7 @@ import {
   SignInDtoRequest,
   UserProfileResponse,
 } from '@botmind-twitter-nx/api-interface';
+import { Subscription } from 'rxjs';
 import { Emitters } from '../../emitters/emitters';
 import { handleServerError } from '../../helpers/Errors/handleServerError';
 import { createErrorItems } from '../../helpers/Form';
@@ -18,9 +19,10 @@ import { MessageService } from '../../service/message.service';
   selector: 'app-login',
   templateUrl: './signin.component.html',
 })
-export class SigninComponent implements OnInit {
+export class SigninComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   errors!: FormErrors;
+  subs: Subscription[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -43,26 +45,32 @@ export class SigninComponent implements OnInit {
     this.errors = createErrorItems(formItems);
   }
 
+  ngOnDestroy(): void {
+    this.subs.map((s) => s.unsubscribe());
+  }
+
   onSubmit(): void {
-    this.authService.signIn(this.form.getRawValue() as SignInDtoRequest).subscribe({
-      // on success
-      next: (res) => {
-        this.jwtService.setToken(res);
-        this.authService.getUserProfile().subscribe((res: UserProfileResponse) => {
-          this.authService.currentUser = res;
-          this.messageService.add({
-            message: `Bonjour ${this.authService.currentUser.firstname} ${this.authService.currentUser.lastname}, vous êtes connecté.`,
-            type: 'success',
+    this.subs.push(
+      this.authService.signIn(this.form.getRawValue() as SignInDtoRequest).subscribe({
+        // on success
+        next: (res) => {
+          this.jwtService.setToken(res);
+          this.authService.getUserProfile().subscribe((res: UserProfileResponse) => {
+            this.authService.currentUser = res;
+            Emitters.authEmitter.emit(true);
+            this.router.navigate(['/']);
+            this.messageService.add({
+              message: `Bonjour ${this.authService.currentUser.firstname} ${this.authService.currentUser.lastname}, vous êtes connecté.`,
+              type: 'success',
+            });
           });
-          Emitters.authEmitter.emit(true);
-          this.router.navigate(['/']);
-        });
-      },
-      // on error
-      error: ({ error }: { error: ServerError }) => {
-        Emitters.authEmitter.emit(false);
-        handleServerError(error, this.errors, this.messageService);
-      },
-    });
+        },
+        // on error
+        error: ({ error }: { error: ServerError }) => {
+          Emitters.authEmitter.emit(false);
+          handleServerError(error, this.errors, this.messageService);
+        },
+      })
+    );
   }
 }
