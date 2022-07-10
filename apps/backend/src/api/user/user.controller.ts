@@ -6,7 +6,7 @@ import { User } from '../entities';
 import { UserService } from './user.service';
 
 @ApiBearerAuth()
-@ApiTags('users')
+@ApiTags('Users')
 @Controller('users')
 @UseGuards(JwtGuard)
 export class UserController {

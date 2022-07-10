@@ -20,7 +20,7 @@ async function bootstrap() {
     .setDescription('The Botmind Twitter API description')
     .setVersion('1.0')
     .addBearerAuth({
-      description: `Please enter token your token :`,
+      description: `Please enter your token :`,
       name: 'Authorization',
       bearerFormat: 'Bearer',
       scheme: 'Bearer',
