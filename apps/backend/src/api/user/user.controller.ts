@@ -1,9 +1,11 @@
 import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
 import { User } from '../entities';
 import { UserService } from './user.service';
 
+@ApiTags('users')
 @Controller('users')
 @UseGuards(JwtGuard)
 export class UserController {

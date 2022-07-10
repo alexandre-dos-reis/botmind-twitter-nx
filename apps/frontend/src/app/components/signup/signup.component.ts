@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ServerError, SignUpDtoRequest } from '@botmind-twitter-nx/api-interface';
 import { Subscription } from 'rxjs';
 import { emptyErrorForm } from '../../helpers/Errors';
@@ -21,7 +22,8 @@ export class SignupComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -54,6 +56,7 @@ export class SignupComponent implements OnInit, OnDestroy {
           });
           this.form.reset();
           this.errors = emptyErrorForm(this.errors);
+          this.router.navigate(['se-connecter']);
         },
         // on error
         error: ({ error }: { error: ServerError }) => {

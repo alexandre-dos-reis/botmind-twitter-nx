@@ -2,9 +2,8 @@ FROM node:current-alpine3.15 as builder
 RUN mkdir /app
 WORKDIR /app
 COPY . .
-RUN npm i --force 
+RUN npm i --legacy-peer-deps
 RUN npx nx run-many --target=build --all --skip-nx-cache
-# RUN npm prune --production
 
 FROM pierrezemb/gostatic:latest as frontend
 COPY --from=builder /app/dist/apps/frontend /srv/http

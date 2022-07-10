@@ -25,7 +25,9 @@ import {
   DeleteTweetResponse,
 } from '@botmind-twitter-nx/api-interface';
 import { TweetService } from './tweet.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Tweets')
 @Controller('tweets')
 @UseGuards(JwtGuard)
 export class TweetController {
