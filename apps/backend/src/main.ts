@@ -19,6 +19,14 @@ async function bootstrap() {
     .setTitle('Botmind Twitter API')
     .setDescription('The Botmind Twitter API description')
     .setVersion('1.0')
+    .addBearerAuth({
+      description: `Please enter token your token :`,
+      name: 'Authorization',
+      bearerFormat: 'Bearer',
+      scheme: 'Bearer',
+      type: 'http',
+      in: 'Header',
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
