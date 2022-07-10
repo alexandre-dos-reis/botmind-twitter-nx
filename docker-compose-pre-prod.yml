@@ -31,6 +31,8 @@ services:
       - DB_HOST=bt-postgre
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
+    depends_on:
+      - bt-postgre
 
   bt-frontend:
     container_name: bt-frontend
@@ -40,6 +42,8 @@ services:
       target: frontend
     ports: 
       - 8043:8043
+    depends_on:
+      - bt-backend
 
 networks:
   bt-backend: {}

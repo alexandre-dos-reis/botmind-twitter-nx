@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   ServerError,
@@ -20,12 +20,12 @@ import { MessageService } from '../../service/message.service';
   templateUrl: './signin.component.html',
 })
 export class SigninComponent implements OnInit, OnDestroy {
-  form!: FormGroup;
+  form!: UntypedFormGroup;
   errors!: FormErrors;
   subs: Subscription[] = [];
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private authService: AuthService,
     private messageService: MessageService,
     private router: Router,

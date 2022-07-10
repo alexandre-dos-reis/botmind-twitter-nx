@@ -5,8 +5,7 @@
     "defaultBase": "main"
   },
   "cli": {
-    "defaultCollection": "@nrwl/angular",
-    "packageManager": "npm"
+    "packageManager": "pnpm"
   },
   "implicitDependencies": {
     "package.json": {
@@ -23,14 +22,6 @@
       }
     }
   },
-  "targetDependencies": {
-    "build": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ]
-  },
   "generators": {
     "@nrwl/angular:application": {
       "style": "scss",
@@ -46,5 +37,10 @@
       "style": "scss"
     }
   },
-  "defaultProject": "frontend"
+  "defaultProject": "frontend",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"]
+    }
+  }
 }

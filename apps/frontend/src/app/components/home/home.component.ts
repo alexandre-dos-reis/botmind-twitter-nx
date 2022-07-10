@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { TweetDtoRequest, Tweet, ServerError } from '@botmind-twitter-nx/api-interface';
 import { Subscription } from 'rxjs';
 import { Emitters } from '../../emitters/emitters';
@@ -23,13 +23,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   isUserLoggedIn = false;
   isLoading = true;
   userId!: number;
-  form!: FormGroup;
+  form!: UntypedFormGroup;
   errors!: FormErrors;
   subs: Subscription[] = [];
 
   constructor(
     private tweetsService: TweetService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private messageService: MessageService,
     private authService: AuthService,
     private userService: UserService
