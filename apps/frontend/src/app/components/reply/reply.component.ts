@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Reply, ServerError, TweetDtoRequest } from '@botmind-twitter-nx/api-interface';
 import { Subscription } from 'rxjs';
 import { FormErrors } from '../../helpers/types';
@@ -21,7 +21,7 @@ export class ReplyComponent implements OnInit, OnDestroy {
   isUserTheAuthor = false;
   editMode = false;
 
-  formEdit!: FormGroup;
+  formEdit!: UntypedFormGroup;
   formEditErrors!: FormErrors;
 
   subs: Subscription[] = [];
@@ -29,7 +29,7 @@ export class ReplyComponent implements OnInit, OnDestroy {
   constructor(
     private tweetService: TweetService,
     private userService: UserService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private messageService: MessageService,
     private serverErrorService: ServerErrorService
   ) {}

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ServerError, SignUpDtoRequest } from '@botmind-twitter-nx/api-interface';
 import { Subscription } from 'rxjs';
@@ -13,12 +13,12 @@ import { ServerErrorService } from '../../service/server-error.service';
   templateUrl: './signup.component.html',
 })
 export class SignupComponent implements OnInit, OnDestroy {
-  form!: FormGroup;
+  form!: UntypedFormGroup;
   errors!: FormErrors;
   subs: Subscription[] = [];
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private authService: AuthService,
     private messageService: MessageService,
     private router: Router,
