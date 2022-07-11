@@ -16,8 +16,8 @@
                 <button type="submit" class="w-30 btn btn-primary mt-1 me-1">Modifier</button>
                 <button type="button" class="w-30 btn btn-secondary mt-1"
                     (click)="handleCancelEdit($event)">Annuler</button>
+                <span *ngIf="formEditErrors['content']" class="text-danger ms-3">{{formEditErrors['content']}}</span>
             </div>
-            <span *ngIf="formEditErrors['content']" class="text-danger ms-3">{{formEditErrors['content']}}</span>
         </form>
 
         <p *ngIf="!editMode" class="card-text">{{ reply.content }}</p>

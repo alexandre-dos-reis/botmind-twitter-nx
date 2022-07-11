@@ -3,11 +3,10 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { TweetDtoRequest, Tweet, ServerError } from '@botmind-twitter-nx/api-interface';
 import { Subscription } from 'rxjs';
 import { Emitters } from '../../emitters/emitters';
-import { handleServerError } from '../../helpers/Errors/handleServerError';
-import { createErrorItems } from '../../helpers/Form';
 import { FormErrors } from '../../helpers/types';
 import { AuthService } from '../../service/auth.service';
 import { MessageService } from '../../service/message.service';
+import { ServerErrorService } from '../../service/server-error.service';
 import { TweetService } from '../../service/tweet.service';
 import { UserService } from '../../service/user.service';
 
@@ -32,14 +31,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     private formBuilder: UntypedFormBuilder,
     private messageService: MessageService,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private serverErrorService: ServerErrorService
   ) {}
 
   ngOnInit(): void {
     this.subs.push(
       Emitters.authEmitter.subscribe((auth: boolean) => {
         if (auth) {
-          this.userId = this.userService.getUser()?.id
+          this.userId = this.userService.getUser()?.id;
           this.isUserLoggedIn = auth;
         }
       })
@@ -56,7 +56,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       ...formItems,
     } as TweetDtoRequest);
 
-    this.errors = createErrorItems(formItems);
+    this.errors = this.serverErrorService.createOrReset(formItems);
   }
 
   ngOnDestroy(): void {
@@ -65,6 +65,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   getTweets() {
+    this.isLoading = true
     this.subs.push(
       this.tweetsService
         .getTweets({ count: this.tweetsPerCall, offset: this.offset }, this.isUserLoggedIn)
@@ -89,13 +90,14 @@ export class HomeComponent implements OnInit, OnDestroy {
         next: (res) => {
           this.tweets.unshift(res.tweet);
           this.form.reset();
+          this.errors = this.serverErrorService.createOrReset(this.errors);
           this.messageService.add({
             message: 'Votre tweet a bien été publié.',
             type: 'success',
           });
         },
         error: ({ error }: { error: ServerError }) => {
-          handleServerError(error, this.errors, this.messageService);
+          this.errors = this.serverErrorService.handleError(error, this.errors);
         },
       })
     );

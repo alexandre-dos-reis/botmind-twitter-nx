@@ -10,21 +10,22 @@
 
     <form *ngIf="isUserLoggedIn && isUserTheAuthor && editMode" [formGroup]="formEdit" (submit)="doEdit()"
         class="form-floating mb-1">
-        <textarea formControlName="content" class="form-control" id="floatingTextarea2"
-            style="height: 100px" (click)="$event.stopPropagation()">{{ tweet.content }}</textarea>
+        <textarea formControlName="content" class="form-control darkable" id="floatingTextarea2" style="height: 100px"
+            (click)="$event.stopPropagation()">{{ tweet.content }}</textarea>
         <label for="floatingTextarea2">Modifiez votre tweet...</label>
         <div class="mb-2">
-            <button type="submit" class="w-30 btn btn-primary mt-1 me-1" (click)="$event.stopPropagation()">Modifier</button>
+            <button type="submit" class="w-30 btn btn-primary mt-1 me-1"
+                (click)="$event.stopPropagation()">Modifier</button>
             <button type="button" class="w-30 btn btn-secondary mt-1"
                 (click)="handleCancelEdit($event)">Annuler</button>
+            <span *ngIf="formEditErrors['content']" class="text-danger ms-3">{{formEditErrors['content']}}</span>
         </div>
-        <span *ngIf="formEditErrors['content']" class="text-danger ms-3">{{formEditErrors['content']}}</span>
     </form>
 
     <div class="d-flex">
         <div class="badge bg-primary rounded-pill d-flex justify-content-center align-items-center">{{
             repliesCount }} <i class="bi bi-reply ms-1" style="font-size: 1.3rem;"></i></div>
-            
+
         <div *ngIf="isCurrentUserHasLiked" style="cursor: pointer;" (click)="handleLike($event)"
             class="badge bg-danger rounded-pill ms-3 d-flex justify-content-center align-items-center">
             <span class="me-1">{{ likesCount }}</span><i class="bi bi-balloon-heart-fill"
@@ -46,9 +47,11 @@
     </div>
 </div>
 <div class="mx-3" #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed">
-    <app-reply *ngFor="let reply of replies" [isUserLoggedIn]="isUserLoggedIn" [reply]="reply" (delete)="onDeleteReply(reply)"></app-reply>
+    <app-reply *ngFor="let reply of replies" [isUserLoggedIn]="isUserLoggedIn" [reply]="reply"
+        (delete)="onDeleteReply(reply)"></app-reply>
 
-    <form [formGroup]="formReply" (submit)="handleNewReply()" class="form-floating mb-1" *ngIf="isUserLoggedIn && showEditorReply">
+    <form [formGroup]="formReply" (submit)="handleNewReply()" class="form-floating mb-1"
+        *ngIf="isUserLoggedIn && showEditorReply">
         <textarea formControlName="content" class="form-control darkable" id="floatingTextarea2"
             style="height: 100px"></textarea>
         <label for="floatingTextarea2">Ecrivez une réponse...</label>

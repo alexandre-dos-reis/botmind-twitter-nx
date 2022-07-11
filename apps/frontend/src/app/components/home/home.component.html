@@ -1,9 +1,3 @@
-<div *ngIf="isLoading" class="text-center">
-    <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
-    </div>
-</div>
-
 <div class="list-group" *ngIf="tweets && totalTweets > 0" class="container-sm" infiniteScroll
     [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
 
@@ -17,4 +11,10 @@
 
     <app-tweet *ngFor="let tweet of tweets" [isUserLoggedIn]="isUserLoggedIn" [tweet]="tweet" (delete)="onDeleteTweet(tweet)">
     </app-tweet>
+</div>
+
+<div *ngIf="isLoading" class="text-center mt-3">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
 </div>
