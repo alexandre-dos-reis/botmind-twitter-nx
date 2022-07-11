@@ -6,7 +6,7 @@
   },
   "cli": {
     "defaultCollection": "@nrwl/angular",
-    "packageManager": "npm"
+    "packageManager": "pnpm"
   },
   "implicitDependencies": {
     "package.json": {

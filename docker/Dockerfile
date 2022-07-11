@@ -1,22 +1,23 @@
-FROM node:current-alpine3.15 as builder
-RUN mkdir /app
+FROM node:16 as builder
+RUN curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm
 WORKDIR /app
+COPY pnpm-lock.yaml ./
+RUN pnpm fetch
 COPY . .
-RUN npm i --legacy-peer-deps
-RUN npx nx run-many --target=build --all --skip-nx-cache
+RUN pnpm install --offline
+RUN pnpm exec nx run-many --target=build --all --skip-nx-cache
+#RUN rm -Rf node_modules && pnpm install --prod -r --offline
 
 FROM pierrezemb/gostatic:latest as frontend
 COPY --from=builder /app/dist/apps/frontend /srv/http
 EXPOSE 8043
 CMD ["goStatic"]
 
-FROM node:14-alpine as backend
+FROM node:16-alpine as backend
 ARG BACKEND_PORT
 ENV PORT=$BACKEND_PORT
-RUN mkdir /app
 WORKDIR /app
 COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/package-lock.json ./package-lock.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist/apps/backend ./dist/apps/backend
 COPY --from=builder /app/.env ./.env
