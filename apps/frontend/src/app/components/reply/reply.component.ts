@@ -2,12 +2,9 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Reply, ServerError, TweetDtoRequest } from '@botmind-twitter-nx/api-interface';
 import { Subscription } from 'rxjs';
-import { Emitters } from '../../emitters/emitters';
-import { handleServerError } from '../../helpers/Errors/handleServerError';
-import { createErrorItems } from '../../helpers/Form';
 import { FormErrors } from '../../helpers/types';
-import { AuthService } from '../../service/auth.service';
 import { MessageService } from '../../service/message.service';
+import { ServerErrorService } from '../../service/server-error.service';
 import { TweetService } from '../../service/tweet.service';
 import { UserService } from '../../service/user.service';
 
@@ -31,10 +28,10 @@ export class ReplyComponent implements OnInit, OnDestroy {
 
   constructor(
     private tweetService: TweetService,
-    private authService: AuthService,
     private userService: UserService,
     private formBuilder: FormBuilder,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private serverErrorService: ServerErrorService
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +50,7 @@ export class ReplyComponent implements OnInit, OnDestroy {
       ...formItemsEdit,
     } as TweetDtoRequest);
 
-    this.formEditErrors = createErrorItems(formItemsEdit);
+    this.formEditErrors = this.serverErrorService.createOrReset(formItemsEdit);
   }
 
   ngOnDestroy(): void {
@@ -108,13 +105,14 @@ export class ReplyComponent implements OnInit, OnDestroy {
           next: (res) => {
             this.reply = res.tweet; // This is a reply !;
             this.editMode = false;
+            this.formEditErrors = this.serverErrorService.createOrReset(this.formEditErrors)
             this.messageService.add({
               message: 'La réponse a bien été modifié.',
               type: 'success',
             });
           },
           error: ({ error }: { error: ServerError }) => {
-            handleServerError(error, this.formEditErrors, this.messageService);
+            this.formEditErrors = this.serverErrorService.handleError(error, this.formEditErrors);
           },
         })
     );

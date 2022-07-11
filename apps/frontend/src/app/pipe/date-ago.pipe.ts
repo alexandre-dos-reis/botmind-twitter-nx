@@ -8,7 +8,7 @@ export class DateAgoPipe implements PipeTransform {
   transform(value: any, args?: any): any {
     if (value) {
       const seconds = Math.floor((+new Date() - +new Date(value)) / 1000);
-      if (seconds < 29) return 'Just now';
+      if (seconds < 29) return 'Maintenant';
 
       interface Intervals {
         [key: string]: number;
@@ -28,11 +28,7 @@ export class DateAgoPipe implements PipeTransform {
       for (const i in intervals) {
         counter = Math.floor(seconds / intervals[i as keyof Intervals]);
         if (counter > 0) {
-          if (counter === 1) {
-            return 'Il y a ' + counter + ' ' + i; // singular (1 day ago)
-          } else {
-            return 'Il y a ' + counter + ' ' + i; // plural (2 days ago)
-          }
+          return 'Il y a ' + counter + ' ' + i + (counter === 1 || i === 'mois' ? '' : 's'); // singular
         }
       }
     }

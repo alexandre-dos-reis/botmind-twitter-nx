@@ -10,7 +10,7 @@
 
     <form *ngIf="isUserLoggedIn && isUserTheAuthor && editMode" [formGroup]="formEdit" (submit)="doEdit()"
         class="form-floating mb-1">
-        <textarea formControlName="content" class="form-control" id="floatingTextarea2"
+        <textarea formControlName="content" class="form-control darkable" id="floatingTextarea2"
             style="height: 100px" (click)="$event.stopPropagation()">{{ tweet.content }}</textarea>
         <label for="floatingTextarea2">Modifiez votre tweet...</label>
         <div class="mb-2">

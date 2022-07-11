@@ -8,12 +8,11 @@ import {
 } from '@botmind-twitter-nx/api-interface';
 import { Subscription } from 'rxjs';
 import { Emitters } from '../../emitters/emitters';
-import { handleServerError } from '../../helpers/Errors/handleServerError';
-import { createErrorItems } from '../../helpers/Form';
 import { FormErrors } from '../../helpers/types';
 import { AuthService } from '../../service/auth.service';
 import { JwtService } from '../../service/jwt.service';
 import { MessageService } from '../../service/message.service';
+import { ServerErrorService } from '../../service/server-error.service';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +28,8 @@ export class SigninComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private messageService: MessageService,
     private router: Router,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private serverErrorService: ServerErrorService
   ) {}
 
   ngOnInit(): void {
@@ -42,7 +42,7 @@ export class SigninComponent implements OnInit, OnDestroy {
       ...formItems,
     } as SignInDtoRequest);
 
-    this.errors = createErrorItems(formItems);
+    this.errors = this.serverErrorService.createOrReset(formItems)
   }
 
   ngOnDestroy(): void {
@@ -52,7 +52,6 @@ export class SigninComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     this.subs.push(
       this.authService.signIn(this.form.getRawValue() as SignInDtoRequest).subscribe({
-        // on success
         next: (res) => {
           this.jwtService.setToken(res);
           this.authService.getUserProfile().subscribe((res: UserProfileResponse) => {
@@ -65,10 +64,9 @@ export class SigninComponent implements OnInit, OnDestroy {
             });
           });
         },
-        // on error
         error: ({ error }: { error: ServerError }) => {
           Emitters.authEmitter.emit(false);
-          handleServerError(error, this.errors, this.messageService);
+          this.errors = this.serverErrorService.handleError(error, this.errors);
         },
       })
     );

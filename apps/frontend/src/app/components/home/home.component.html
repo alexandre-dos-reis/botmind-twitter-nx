@@ -1,20 +1,24 @@
+<form [formGroup]="form" (submit)="onSubmit()" class="form-floating mb-3" *ngIf="isUserLoggedIn">
+    <textarea formControlName="content" class="form-control darkable" id="floatingTextarea2"
+        style="height: 100px"></textarea>
+    <label for="floatingTextarea2">Ecrivez un tweet...</label>
+    <button type="submit" class="w-30 btn btn-primary mt-1">Publier</button>
+    <span *ngIf="errors['content']" class="text-danger ms-3">{{errors['content']}}</span>
+</form>
+
+<div class="list-group container-sm" *ngIf="tweets && tweets.length > 0" infiniteScroll
+    [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
+
+    <app-tweet *ngFor="let tweet of tweets" [isUserLoggedIn]="isUserLoggedIn" [tweet]="tweet" (delete)="onDeleteTweet(tweet)">
+    </app-tweet>
+</div>
+
+<div class="text-center" *ngIf="!isLoading && tweets && tweets.length === 0">
+    Il n'y pas de tweets pour le moment.
+</div>
+
 <div *ngIf="isLoading" class="text-center">
     <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
     </div>
-</div>
-
-<div class="list-group" *ngIf="tweets && totalTweets > 0" class="container-sm" infiniteScroll
-    [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
-
-    <form [formGroup]="form" (submit)="onSubmit()" class="form-floating mb-3" *ngIf="isUserLoggedIn">
-        <textarea formControlName="content" class="form-control darkable" id="floatingTextarea2"
-            style="height: 100px"></textarea>
-        <label for="floatingTextarea2">Ecrivez un tweet...</label>
-        <button type="submit" class="w-30 btn btn-primary mt-1">Publier</button>
-        <span *ngIf="errors['content']" class="text-danger ms-3">{{errors['content']}}</span>
-    </form>
-
-    <app-tweet *ngFor="let tweet of tweets" [isUserLoggedIn]="isUserLoggedIn" [tweet]="tweet" (delete)="onDeleteTweet(tweet)">
-    </app-tweet>
 </div>

@@ -2,12 +2,9 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Reply, ServerError, Tweet, TweetDtoRequest } from '@botmind-twitter-nx/api-interface';
 import { Subscription } from 'rxjs';
-import { Emitters } from '../../emitters/emitters';
-import { handleServerError } from '../../helpers/Errors/handleServerError';
-import { createErrorItems } from '../../helpers/Form';
 import { FormErrors } from '../../helpers/types';
-import { AuthService } from '../../service/auth.service';
 import { MessageService } from '../../service/message.service';
+import { ServerErrorService } from '../../service/server-error.service';
 import { TweetService } from '../../service/tweet.service';
 import { UserService } from '../../service/user.service';
 
@@ -42,7 +39,7 @@ export class TweetComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private messageService: MessageService,
     private userService: UserService,
-    private authService: AuthService
+    private serverErrorService: ServerErrorService
   ) {}
 
   ngOnInit(): void {
@@ -63,7 +60,7 @@ export class TweetComponent implements OnInit, OnDestroy {
       ...formItemsReply,
     } as TweetDtoRequest);
 
-    this.formReplyErrors = createErrorItems(formItemsReply);
+    this.formReplyErrors = this.serverErrorService.createOrReset(formItemsReply);
 
     const formItemsEdit = {
       content: this.tweet.content,
@@ -73,7 +70,7 @@ export class TweetComponent implements OnInit, OnDestroy {
       ...formItemsEdit,
     } as TweetDtoRequest);
 
-    this.formEditErrors = createErrorItems(formItemsEdit);
+    this.formEditErrors = this.serverErrorService.createOrReset(formItemsEdit)
   }
 
   ngOnDestroy(): void {
@@ -131,13 +128,14 @@ export class TweetComponent implements OnInit, OnDestroy {
             this.tweet = res.tweet;
             this.editMode = false;
             this.showEditorReply = true;
+            this.formEditErrors = this.serverErrorService.createOrReset(this.formEditErrors)
             this.messageService.add({
               message: 'Le tweet a bien été modifié.',
               type: 'success',
             });
           },
           error: ({ error }: { error: ServerError }) => {
-            handleServerError(error, this.formReplyErrors, this.messageService);
+            this.formEditErrors = this.serverErrorService.handleError(error, this.formEditErrors);
           },
         })
     );
@@ -152,13 +150,14 @@ export class TweetComponent implements OnInit, OnDestroy {
             this.replies.push(res.reply);
             this.repliesCount += 1;
             this.formReply.reset();
+            this.formReplyErrors = this.serverErrorService.createOrReset(this.formReplyErrors)
             this.messageService.add({
               message: 'Votre réponse a bien été publié.',
               type: 'success',
             });
           },
           error: ({ error }: { error: ServerError }) => {
-            handleServerError(error, this.formReplyErrors, this.messageService);
+            this.formReplyErrors = this.serverErrorService.handleError(error, this.formReplyErrors);
           },
         })
     );
