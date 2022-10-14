@@ -8,7 +8,7 @@ RUN npx nx run-many --target=build --all --skip-nx-cache
 FROM pierrezemb/gostatic:latest as frontend
 COPY --from=builder /app/dist/apps/frontend /srv/http
 EXPOSE 8043
-CMD ["goStatic"]
+CMD [ "-fallback", "index.html" ]
 
 FROM node:14-alpine as backend
 ARG BACKEND_PORT
